@@ -1,0 +1,75 @@
+package com.example.todolist.viewmodel.todo
+
+import com.example.todolist.ViewModelTest
+import com.example.todolist.data.entity.ToDoEntity
+import com.example.todolist.domain.todo.InsertToDoListUseCase
+import com.example.todolist.presentation.list.ListViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Before
+import org.junit.Test
+import org.koin.test.inject
+
+/**
+ * [ListViewModel]을 테스트 하기 위한 Unit Test Class
+ *
+ * 1. initData() -> mocking data를 넣어서 잘 불러오는지 확인
+ * 2. test ViewModel fetch
+ * 3. test Item update
+ * 4. test Item Delete All
+ */
+// ViewModelTest 상속받음
+@ExperimentalCoroutinesApi
+internal class ListViewModelTest: ViewModelTest() {
+
+    // 필요한 것을 주입받음(모듈에 이미 선언했으므로 inject를 활용하는 것임)
+    private val viewModel: ListViewModel by inject()
+
+    // 임시로 넣을 수 있는 UseCase 만듬
+    private val insertToDoListUseCase: InsertToDoListUseCase by inject()
+
+    // mocking data를 만듬
+    private val mockList = (0 until 10).map {
+        ToDoEntity(
+            id = it.toLong(),
+            title = "title $it",
+            description = "description $it",
+            hasCompleted = false
+        )
+    }
+    /**
+     * 필요한 UseCase
+     * 1. InsertToDoListUseCase
+     * 2. GetToDoItemUseCase
+     */
+
+
+    // 초기화 하는 과정
+    @Before
+    fun init() {
+        initData()
+    }
+
+    // 코루틴 활용 위해 임시로 만든 mocking data를 넣고 테스트용 코루틴 활용
+    private fun initData() = runBlockingTest {
+        // operator invoke 함수를 구현해서 아래와 같이 mockList만 넣어도 해당 invoke함수 호출해서 Repository를 통해 insert진행
+        insertToDoListUseCase(mockList)
+    }
+
+    // 데이터를 불러오기 위한 테스트(백틱을 사용해서 띄어쓰기 상관없게함)
+    // Test : test viewModel fetch
+    // 입력된 데이터를 불러와서 검증한다.
+    @Test
+    fun `test viewModel fetch`(): Unit = runBlockingTest {
+        // 테스트 할 때 잘 들어갔는지 확인 & 앞서 테스트를 위한 LiveData용 확장함수 활용함
+        val testObservable = viewModel.todoListLiveData.test()
+        viewModel.fetchData()
+        // viewmodel에서 fetch이후 testObservable을 통해 mockList와 맞는지 확인
+        testObservable.assertValueSequence(
+            listOf(
+                mockList
+            )
+        )
+    }
+
+}

@@ -22,8 +22,9 @@ import org.mockito.junit.MockitoRule
 
 // 내부 패키지 테스트를 위해 internal 선언
 // Koin으로 테스트 + 실험용을 명시하는 어노테이션을 붙임
+// 상속을 받게 하기 위해 abstract로 만듬
 @ExperimentalCoroutinesApi
-internal class ViewModelTest: KoinTest {
+internal abstract class ViewModelTest: KoinTest {
 
     // Junit어노테이션 사용 & mokcito도 사용
     // 룰을 정의해서 TDD 준비를 함
