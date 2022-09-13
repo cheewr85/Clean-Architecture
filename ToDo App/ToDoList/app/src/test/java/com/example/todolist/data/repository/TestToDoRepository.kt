@@ -14,4 +14,27 @@ class TestToDoRepository: ToDoRepository {
     override suspend fun insertToDoList(toDoList: List<ToDoEntity>) {
         this.toDoList.addAll(toDoList)
     }
+
+    override suspend fun updateToDoItem(toDoItem: ToDoEntity): Boolean {
+        // 하나의 아이템을 업데이트 함 해당 id의 아이템을 찾아서 업데이트
+        val foundToDoEntity = toDoList.find { it.id == toDoItem.id }
+        if (foundToDoEntity == null) {
+            return false
+        } else {
+            // find함수를 통해서 찾고 있다면 해당 Entity의 값을 업데이트 할 아이템으로 변경함
+            this.toDoList[toDoList.indexOf(foundToDoEntity)] = toDoItem
+            return true
+        }
+    }
+
+    override suspend fun getToDoItem(itemId: Long): ToDoEntity? {
+        return toDoList.find { it.id == itemId}
+    }
+
+    // 컬렉션에서 아예 다 삭제하는 메소드로 비워줌
+    override suspend fun deleteAll() {
+        toDoList.clear()
+    }
+
+
 }

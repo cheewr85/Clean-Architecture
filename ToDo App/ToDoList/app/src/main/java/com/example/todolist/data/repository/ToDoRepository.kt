@@ -6,10 +6,18 @@ import com.example.todolist.data.entity.ToDoEntity
 /**
  * 1.insertToDoList
  * 2.getToDoList
+ * 3.updateToDoItem
  */
 interface ToDoRepository {
     // 코루틴 이용 io쓰레드 활용 & 아래 함수에 들어갈 유형은 ToDo Entity가 될 것임
     suspend fun getToDoList():List<ToDoEntity>
 
     suspend fun insertToDoList(toDoList: List<ToDoEntity>)
+
+    // 업데이트 성공 여부를 위해 Boolean으로 리턴함
+    suspend fun updateToDoItem(toDoItem: ToDoEntity): Boolean
+
+    suspend fun getToDoItem(itemId: Long): ToDoEntity?
+
+    suspend fun deleteAll()
 }
