@@ -21,6 +21,7 @@ internal val appTestModule = module {
             id = id,
             get(),
             get(),
+            get(),
             get()
         )
     }

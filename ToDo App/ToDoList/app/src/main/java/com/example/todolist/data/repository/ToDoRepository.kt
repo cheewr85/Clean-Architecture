@@ -12,7 +12,7 @@ interface ToDoRepository {
     // 코루틴 이용 io쓰레드 활용 & 아래 함수에 들어갈 유형은 ToDo Entity가 될 것임
     suspend fun getToDoList():List<ToDoEntity>
 
-    suspend fun insertToDoItem(toDoItem: ToDoEntity)
+    suspend fun insertToDoItem(toDoItem: ToDoEntity): Long
 
     suspend fun insertToDoList(toDoList: List<ToDoEntity>)
 

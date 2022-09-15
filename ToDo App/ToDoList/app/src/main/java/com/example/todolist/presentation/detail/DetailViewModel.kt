@@ -3,8 +3,10 @@ package com.example.todolist.presentation.detail
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.todolist.data.entity.ToDoEntity
 import com.example.todolist.domain.todo.DeleteToDoItemUseCase
 import com.example.todolist.domain.todo.GetToDoItemUseCase
+import com.example.todolist.domain.todo.InsertToDoItemUseCase
 import com.example.todolist.domain.todo.UpdateToDoUseCase
 import com.example.todolist.presentation.BaseViewModel
 import kotlinx.coroutines.Job
@@ -19,7 +21,8 @@ internal class DetailViewModel(
     // 아이템을 가져오는 UseCase 활용
     private val getToDoItemUseCase: GetToDoItemUseCase,
     private val deleteToDoItemUseCase: DeleteToDoItemUseCase,
-    private val updateToDoUseCase: UpdateToDoUseCase
+    private val updateToDoUseCase: UpdateToDoUseCase,
+    private val insertToDoItemUseCase: InsertToDoItemUseCase
 ): BaseViewModel() {
 
     private var _toDoDetailLiveData = MutableLiveData<ToDoDetailState>(ToDoDetailState.UnInitialized)
@@ -29,7 +32,7 @@ internal class DetailViewModel(
         when (detailMode) {
             // 모드에 따라 불러오는 것을 다르게 처리함
             DetailMode.WRITE -> {
-                // TODO 나중에 작성모드로 상세화면 진입 로직 처리
+                _toDoDetailLiveData.postValue(ToDoDetailState.Write)
             }
             DetailMode.DETAIL -> {
                 // LiveData에 상태를 state패턴을 활용함
@@ -74,7 +77,19 @@ internal class DetailViewModel(
         when (detailMode) {
             // 모드에 따라 불러오는 것을 다르게 처리함
             DetailMode.WRITE -> {
-                // TODO 나중에 작성모드로 작성처리
+                // 작성 모드 반영을 위해서 InsertItem이 됨
+                try {
+                    val toDoEntity = ToDoEntity(
+                        title = title,
+                        description = description
+                    )
+                    id = insertToDoItemUseCase(toDoEntity)
+                    _toDoDetailLiveData.postValue(ToDoDetailState.Success(toDoEntity))
+                    detailMode = DetailMode.DETAIL
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    _toDoDetailLiveData.postValue(ToDoDetailState.Error)
+                }
             }
             DetailMode.DETAIL -> {
                 // 아이템 정보를 가져와서 새로운 객체를 깊은 복사를해서 파라미터로 받은 값으로 갱신함
