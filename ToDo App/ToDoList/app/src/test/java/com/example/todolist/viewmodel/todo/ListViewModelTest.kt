@@ -97,7 +97,7 @@ internal class ListViewModelTest: ViewModelTest() {
 
     // Test : 데이터를 다 날렸을 때 빈상태로 보여지는가
     @Test
-    fun `test Item Delete All`(): Unit = runTest {
+    fun `test Item Delete All`(): Unit = runBlockingTest {
         // fetch를 통해 아래의 데이터가 있다가 전체 삭제를 했을 때 비어있는지 검증
         val testObservable = viewModel.todoListLiveData.test()
         viewModel.deleteAll()

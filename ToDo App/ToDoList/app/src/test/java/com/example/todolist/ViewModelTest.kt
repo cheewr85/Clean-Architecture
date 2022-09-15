@@ -1,11 +1,13 @@
 package com.example.todolist
 
 import android.app.Application
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import com.example.todolist.di.appTestModule
 import com.example.todolist.livedata.LiveDataTestObserver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -23,6 +25,7 @@ import org.mockito.junit.MockitoRule
 // 내부 패키지 테스트를 위해 internal 선언
 // Koin으로 테스트 + 실험용을 명시하는 어노테이션을 붙임
 // 상속을 받게 하기 위해 abstract로 만듬
+@ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
 internal abstract class ViewModelTest: KoinTest {
 
@@ -30,6 +33,9 @@ internal abstract class ViewModelTest: KoinTest {
     // 룰을 정의해서 TDD 준비를 함
     @get:Rule
     val mockitoRule: MockitoRule = MockitoJUnit.rule()
+
+    @get:Rule
+    val instantExecutorRUle = InstantTaskExecutorRule()
 
     // mock 데이터 추가, test를 위한 데이터
     @Mock
@@ -61,6 +67,7 @@ internal abstract class ViewModelTest: KoinTest {
         val testObserver = LiveDataTestObserver<T>()
         // android livedata를 넣어서 테스트
         observeForever(testObserver)
+
         return testObserver
     }
 

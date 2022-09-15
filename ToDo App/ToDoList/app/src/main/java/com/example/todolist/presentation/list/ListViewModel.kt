@@ -2,12 +2,12 @@ package com.example.todolist.presentation.list
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todolist.data.entity.ToDoEntity
 import com.example.todolist.domain.todo.DeleteAllToDoItemUseCase
 import com.example.todolist.domain.todo.GetToDoListUseCase
 import com.example.todolist.domain.todo.UpdateToDoUseCase
+import com.example.todolist.presentation.BaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -23,7 +23,7 @@ internal class ListViewModel(
     private val getToDoListUseCase: GetToDoListUseCase,
     private val updateToDoUseCase: UpdateToDoUseCase,
     private val deleteAllToDoItemUseCase: DeleteAllToDoItemUseCase
-): ViewModel() {
+): BaseViewModel() {
 
     // LiveData를 확인해야하기 때문에 이를 선언함, 내외부 사용을 구분하기 위해 아래와 같이 씀
     // ToDoLisState로 초기 설정함
@@ -32,7 +32,7 @@ internal class ListViewModel(
 
     // fetch 데이터 호출 시 데이터 변경을 확인, 실제 코루틴 이용시 ViewModelScope를 사용함
     // 해당 Scope에서 특정 함수 동작이 마무리 될 때까지 코루틴 블럭에서 관리하다가 끝나면 해제할 수 있도록 ViewModelScope가 사용됨
-    fun fetchData(): Job = viewModelScope.launch {
+    override fun fetchData(): Job = viewModelScope.launch {
         // ToDoListState 로딩중으로 바꿈 & 성공이면 데이터를 받아 처리함
         _toDoListLiveData.postValue(ToDoListState.Loading)
         _toDoListLiveData.postValue(ToDoListState.Success(getToDoListUseCase()))
