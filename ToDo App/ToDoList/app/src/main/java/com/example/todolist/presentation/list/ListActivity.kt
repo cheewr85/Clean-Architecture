@@ -1,5 +1,6 @@
 package com.example.todolist.presentation.list
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.todolist.R
 import com.example.todolist.databinding.ActivityListBinding
 import com.example.todolist.presentation.BaseActivity
+import com.example.todolist.presentation.detail.DetailActivity
 import com.example.todolist.presentation.detail.DetailMode
 import com.example.todolist.presentation.view.ToDoAdapter
 import kotlinx.coroutines.CoroutineScope
@@ -45,11 +47,10 @@ internal class ListActivity : BaseActivity<ListViewModel>(), CoroutineScope {
         }
 
         addToDoButton.setOnClickListener {
-            // TODO DetailActivity 구현
-//            startActivityForResult(
-//                DetailActivity.getIntent(this@ListActivity, DetailMode.WRITE),
-//                DetailActivity.FETCH_REQUEST_CODE
-//            )
+            startActivityForResult(
+                DetailActivity.getIntent(this@ListActivity, DetailMode.WRITE),
+                DetailActivity.FETCH_REQUEST_CODE
+            )
         }
     }
 
@@ -95,14 +96,22 @@ internal class ListActivity : BaseActivity<ListViewModel>(), CoroutineScope {
             adapter.setToDoList(
                 state.toDoList,
                 toDoItemClickListener = {
-//                    startActivityForResult(
-//                        DetailActivity.getIntent(this@ListActivity, it.id, DetailMode.DETAIL),
-//                        DetailActivity.FETCH_REQUEST_CODE
-//                    )
+                    startActivityForResult(
+                        DetailActivity.getIntent(this@ListActivity, it.id, DetailMode.DETAIL),
+                        DetailActivity.FETCH_REQUEST_CODE
+                    )
                 }, toDoCheckListener = {
                     viewModel.updateEntity(it)
                 }
             )
+        }
+    }
+
+    // Detail에서 처리한 결과를 반영하게 fetch함
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == DetailActivity.FETCH_REQUEST_CODE && resultCode == RESULT_OK) {
+            viewModel.fetchData()
         }
     }
 

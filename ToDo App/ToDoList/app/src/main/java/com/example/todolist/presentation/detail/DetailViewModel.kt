@@ -110,4 +110,9 @@ internal class DetailViewModel(
         }
     }
 
+    // 수정 모드에 들어갔을 때 쓰는 함수
+    fun setModifyMode() = viewModelScope.launch {
+        _toDoDetailLiveData.postValue(ToDoDetailState.Modify)
+    }
+
 }
