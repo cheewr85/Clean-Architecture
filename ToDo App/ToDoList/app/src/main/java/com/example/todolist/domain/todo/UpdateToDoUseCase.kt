@@ -9,7 +9,7 @@ internal class UpdateToDoUseCase(
 ): UseCase {
 
     // 함수 생성, 오퍼레이터 이용해서 구현 가능(함수를 호출할 수 있도록 해줌), 외부에서 넣으면 아래 로직 실행
-    suspend operator fun invoke(toDoEntity: ToDoEntity): Boolean {
+    suspend operator fun invoke(toDoEntity: ToDoEntity) {
         return toDoRepository.updateToDoItem(toDoEntity)
     }
 

@@ -36,6 +36,10 @@ android {
         unitTests.returnDefaultValues = true
     }
 
+    viewBinding {
+        enabled = true
+    }
+
 }
 
 dependencies {
@@ -80,4 +84,15 @@ dependencies {
 
     // Lifecycle Extension을 위한 의존성 추가
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
+    // RoomDB
+    implementation "androidx.room:room-runtime:2.4.3"
+    annotationProcessor "androidx.room:room-compiler:2.4.3"
+
+    // To use Kotlin annotation processing tool (kapt)
+    kapt "androidx.room:room-compiler:2.4.3"
+    implementation 'androidx.room:room-ktx:2.4.3'
+
+    // Swipe Refresh Layout
+    implementation 'com.android.support:support-v4:32.0.3'
 }

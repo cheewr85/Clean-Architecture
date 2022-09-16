@@ -17,11 +17,11 @@ interface ToDoRepository {
     suspend fun insertToDoList(toDoList: List<ToDoEntity>)
 
     // 업데이트 성공 여부를 위해 Boolean으로 리턴함
-    suspend fun updateToDoItem(toDoItem: ToDoEntity): Boolean
+    suspend fun updateToDoItem(toDoItem: ToDoEntity)
 
     suspend fun getToDoItem(itemId: Long): ToDoEntity?
 
     suspend fun deleteAll()
 
-    suspend fun deleteToDoItem(id: Long): Boolean
+    suspend fun deleteToDoItem(id: Long)
 }

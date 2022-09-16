@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.todolist.data.entity.ToDoEntity
+import com.example.todolist.domain.todo.*
 import com.example.todolist.domain.todo.DeleteAllToDoItemUseCase
 import com.example.todolist.domain.todo.GetToDoListUseCase
+import com.example.todolist.domain.todo.InsertToDoListUseCase
 import com.example.todolist.domain.todo.UpdateToDoUseCase
 import com.example.todolist.presentation.BaseViewModel
 import kotlinx.coroutines.Job
@@ -22,7 +24,7 @@ internal class ListViewModel(
     // 필요한 UseCase를 주입받아서 씀
     private val getToDoListUseCase: GetToDoListUseCase,
     private val updateToDoUseCase: UpdateToDoUseCase,
-    private val deleteAllToDoItemUseCase: DeleteAllToDoItemUseCase
+    private val deleteAllToDoItemUseCase: DeleteAllToDoItemUseCase,
 ): BaseViewModel() {
 
     // LiveData를 확인해야하기 때문에 이를 선언함, 내외부 사용을 구분하기 위해 아래와 같이 씀

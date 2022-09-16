@@ -57,14 +57,10 @@ internal class DetailViewModel(
     // 해당 id에 속하는 Item을 삭제하는 메소드
     fun deleteTodo() = viewModelScope.launch {
         _toDoDetailLiveData.postValue(ToDoDetailState.Loading)
-
         try {
-            if (deleteToDoItemUseCase(id)) {
-                _toDoDetailLiveData.postValue(ToDoDetailState.Delete)
-            } else {
-                _toDoDetailLiveData.postValue(ToDoDetailState.Error)
-            }
-        } catch (e : Exception) {
+            deleteToDoItemUseCase(id)
+            _toDoDetailLiveData.postValue(ToDoDetailState.Delete)
+        } catch (e: Exception) {
             e.printStackTrace()
             _toDoDetailLiveData.postValue(ToDoDetailState.Error)
         }

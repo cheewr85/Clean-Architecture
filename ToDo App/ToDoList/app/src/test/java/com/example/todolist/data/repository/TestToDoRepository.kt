@@ -20,16 +20,9 @@ class TestToDoRepository: ToDoRepository {
         return toDoItem.id
     }
 
-    override suspend fun updateToDoItem(toDoItem: ToDoEntity): Boolean {
-        // 하나의 아이템을 업데이트 함 해당 id의 아이템을 찾아서 업데이트
-        val foundToDoEntity = toDoList.find { it.id == toDoItem.id }
-        if (foundToDoEntity == null) {
-            return false
-        } else {
-            // find함수를 통해서 찾고 있다면 해당 Entity의 값을 업데이트 할 아이템으로 변경함
-            this.toDoList[toDoList.indexOf(foundToDoEntity)] = toDoItem
-            return true
-        }
+    override suspend fun updateToDoItem(toDoEntity: ToDoEntity) {
+        val foundToDoEntity = toDoList.find { it.id == toDoEntity.id }
+        this.toDoList[toDoList.indexOf(foundToDoEntity)] = toDoEntity
     }
 
     override suspend fun getToDoItem(itemId: Long): ToDoEntity? {
@@ -41,15 +34,9 @@ class TestToDoRepository: ToDoRepository {
         toDoList.clear()
     }
 
-    override suspend fun deleteToDoItem(id: Long): Boolean {
-        // 삭제할 아이템을 찾음
+    override suspend fun deleteToDoItem(id: Long) {
         val foundToDoEntity = toDoList.find { it.id == id }
-        if (foundToDoEntity == null) {
-            return false
-        } else {
-            this.toDoList.removeAt(toDoList.indexOf(foundToDoEntity))
-            return true
-        }
+        this.toDoList.removeAt(toDoList.indexOf(foundToDoEntity))
     }
 
 
