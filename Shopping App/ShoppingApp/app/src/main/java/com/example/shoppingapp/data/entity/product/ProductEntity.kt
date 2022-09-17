@@ -1,5 +1,7 @@
 package com.example.shoppingapp.data.entity.product
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.*
 
 // API를 통해서 아래의 데이터를 받아오므로 그에 맞게 구성함
@@ -14,8 +16,9 @@ import java.util.*
  "product_introduction_image": "http://..."
  },
  */
+@Entity
 data class ProductEntity(
- val id: Long,
+ @PrimaryKey val id: Long,
  val createdAt: Date,
  val productName: String,
  val productPrice: Int,

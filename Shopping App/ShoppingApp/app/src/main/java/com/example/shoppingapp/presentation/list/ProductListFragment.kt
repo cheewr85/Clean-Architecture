@@ -8,6 +8,8 @@ import com.example.shoppingapp.databinding.FragmentProductListBinding
 import com.example.shoppingapp.extension.toast
 import com.example.shoppingapp.presentation.BaseFragment
 import com.example.shoppingapp.presentation.adapter.ProductListAdapter
+import com.example.shoppingapp.presentation.detail.ProductDetailActivity
+import com.example.shoppingapp.presentation.main.MainActivity
 import org.koin.android.ext.android.inject
 
 // BaseFragment에서 View 생성시, ViewBinding 진행과 fetchData가 구현
@@ -27,7 +29,10 @@ internal class ProductListFragment: BaseFragment<ProductListViewModel, FragmentP
     // 인텐트의 결과 코드를 처리하는 것
     private val startProductDetailForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            // 성공적으로 처리 완료 이후 동작
+            // 성공적으로 처리 완료 이후 동작, 해당 코드를 받아서 처리함(주문 완료처리)
+            if (result.resultCode == ProductDetailActivity.PRODUCT_ORDERED_RESULT_CODE) {
+                (requireActivity() as MainActivity).viewModel.refreshOrderList()
+            }
         }
 
     override fun observeData() = viewModel.productListStateLiveData.observe(this) {
@@ -70,11 +75,10 @@ internal class ProductListFragment: BaseFragment<ProductListViewModel, FragmentP
             emptyResultTextView.isGone = true
             recyclerView.isGone = false
             adapter.setProductList(state.productList) {
-//                // Intent로 넘겨받고 해당 콜백을 처리하게 함
-//                startProductDetailForResult.launch(
-//                    ProductDetailActivity.newIntent(requireContext(), it.id)
-//                )
-                requireContext().toast("Product Entity : $it")
+                // Intent로 넘겨받고 해당 콜백을 처리하게 함
+                startProductDetailForResult.launch(
+                    ProductDetailActivity.newIntent(requireContext(), it.id)
+                )
             }
         }
     }
