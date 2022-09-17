@@ -10,6 +10,7 @@
         <entry key="app/src/main/res/layout/activity_product_detail.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/layout/fragment_product_list.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.19610507246376813" />
+        <entry key="app/src/main/res/layout/viewholder_product_item.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/layout/viewholder_product_list.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.24583333333333332" />
       </map>
