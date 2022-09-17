@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import com.example.shoppingapp.R
 import com.example.shoppingapp.databinding.ActivityMainBinding
 import com.example.shoppingapp.presentation.BaseActivity
+import com.example.shoppingapp.presentation.BaseFragment
 import com.example.shoppingapp.presentation.list.ProductListFragment
 import com.example.shoppingapp.presentation.profile.ProfileFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -67,7 +68,8 @@ internal class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>()
             is MainState.RefreshOrderList -> {
                 binding.bottomNav.selectedItemId = R.id.menu_profile
                 val fragment = supportFragmentManager.findFragmentByTag(ProfileFragment.TAG)
-                // TODO fragment BaseFragment 타입 캐스팅 fetchData()
+                // fragment BaseFragment 타입 캐스팅 fetchData()
+                (fragment as? BaseFragment<*,*>)?.viewModel?.fetchData()
             }
         }
     }

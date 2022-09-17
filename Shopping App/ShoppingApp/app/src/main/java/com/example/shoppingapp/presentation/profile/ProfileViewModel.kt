@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.data.preference.PreferenceManager
+import com.example.shoppingapp.domain.DeleteOrderedProductListUseCase
+import com.example.shoppingapp.domain.GetOrderedProductListUseCase
 import com.example.shoppingapp.presentation.BaseViewModel
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +14,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 internal class ProfileViewModel(
-    private val preferenceManager: PreferenceManager
+    private val preferenceManager: PreferenceManager,
+    private val getOrderedProductListUseCase: GetOrderedProductListUseCase,
+    private val deleteOrderedProductListUseCase: DeleteOrderedProductListUseCase
 ): BaseViewModel() {
 
     private var _profileStateLiveData = MutableLiveData<ProfileState>(ProfileState.Uninitialized)
@@ -50,7 +54,7 @@ internal class ProfileViewModel(
                 ProfileState.Success.Registered(
                     user.displayName ?: "익명",
                     user.photoUrl,
-                    listOf()
+                    getOrderedProductListUseCase()
                 )
             )
         } ?: kotlin.run {
@@ -58,5 +62,14 @@ internal class ProfileViewModel(
                 ProfileState.Success.NotRegistered
             )
         }
+    }
+
+    // 로그아웃시 토큰과 상품 리스트를 없앰
+    fun signOut() = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            preferenceManager.removedToken()
+        }
+        deleteOrderedProductListUseCase()
+        fetchData()
     }
 }

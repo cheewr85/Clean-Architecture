@@ -23,7 +23,7 @@ class DefaultProductRepository(
     }
 
     override suspend fun getLocalProductList(): List<ProductEntity> = withContext(ioDispatcher) {
-        TODO("Not yet implemented")
+        productDao.getAll()
     }
 
     override suspend fun insertProductItem(productItem: ProductEntity): Long = withContext(ioDispatcher) {
@@ -48,7 +48,7 @@ class DefaultProductRepository(
     }
 
     override suspend fun deleteAll() = withContext(ioDispatcher) {
-        TODO("Not yet implemented")
+        productDao.deleteAll()
     }
 
     override suspend fun deleteProductItem(id: Long) = withContext(ioDispatcher) {

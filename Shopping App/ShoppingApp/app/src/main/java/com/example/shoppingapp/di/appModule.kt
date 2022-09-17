@@ -9,6 +9,9 @@ import com.example.shoppingapp.data.network.provideProductRetrofit
 import com.example.shoppingapp.data.preference.PreferenceManager
 import com.example.shoppingapp.data.repository.DefaultProductRepository
 import com.example.shoppingapp.data.repository.ProductRepository
+import com.example.shoppingapp.domain.*
+import com.example.shoppingapp.domain.DeleteOrderedProductListUseCase
+import com.example.shoppingapp.domain.GetOrderedProductListUseCase
 import com.example.shoppingapp.domain.GetProductItemUseCase
 import com.example.shoppingapp.domain.GetProductListUseCase
 import com.example.shoppingapp.domain.OrderProductItemUseCase
@@ -27,7 +30,7 @@ val appModule = module {
     // ViewModels
     viewModel { MainViewModel() }
     viewModel { ProductListViewModel(get()) }
-    viewModel { ProfileViewModel(get()) }
+    viewModel { ProfileViewModel(get(), get(), get()) }
     viewModel { (productId: Long) -> ProductDetailViewModel(productId, get(), get())}
 
     // Coroutine Dispatcher
@@ -38,6 +41,8 @@ val appModule = module {
     factory { GetProductItemUseCase(get()) }
     factory { GetProductListUseCase(get()) }
     factory { OrderProductItemUseCase(get()) }
+    factory { GetOrderedProductListUseCase(get()) }
+    factory { DeleteOrderedProductListUseCase(get()) }
 
     // Repositories
     // 인터페이스 타입으로 주입받아서 구현을 하게 할 수 있음

@@ -10,6 +10,7 @@ import com.example.shoppingapp.databinding.FragmentProfileBinding
 import com.example.shoppingapp.extension.loadCenterCrop
 import com.example.shoppingapp.extension.toast
 import com.example.shoppingapp.presentation.BaseFragment
+import com.example.shoppingapp.presentation.adapter.ProductListAdapter
 import com.example.shoppingapp.presentation.detail.ProductDetailActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -64,6 +65,9 @@ internal class ProfileFragment: BaseFragment<ProfileViewModel, FragmentProfileBi
         }
     }
 
+    // 똑같은 리스트이기 때문에 RecyclerView Adapter활용
+    private val adapter = ProductListAdapter()
+
     // LiveData 상태에 따라 UI 변화 반영
     override fun observeData() = viewModel.profileStateLiveData.observe(this) {
         when (it) {
@@ -76,11 +80,12 @@ internal class ProfileFragment: BaseFragment<ProfileViewModel, FragmentProfileBi
     }
 
     private fun initViews() = with(binding) {
+        recyclerView.adapter = adapter
         loginButton.setOnClickListener {
             signInGoogle()
         }
         logoutButton.setOnClickListener {
-
+            viewModel.signOut()
         }
     }
 
@@ -110,6 +115,7 @@ internal class ProfileFragment: BaseFragment<ProfileViewModel, FragmentProfileBi
     }
 
     private fun handleLoginState(state: ProfileState.Login) = with(binding) {
+        binding.progressBar.isVisible = true
         // 토큰을 기준으로 아이디 정보를 가져옴
         val credential = GoogleAuthProvider.getCredential(state.idToken, null)
         // credential을 바탕으로 콜백을 받을 수 있음
@@ -137,6 +143,11 @@ internal class ProfileFragment: BaseFragment<ProfileViewModel, FragmentProfileBi
         } else {
             emptyResultTextView.isGone = true
             recyclerView.isGone = false
+            adapter.setProductList(state.productList) {
+                startActivity(
+                    ProductDetailActivity.newIntent(requireContext(), it.id)
+                )
+            }
         }
     }
 
