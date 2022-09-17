@@ -7,6 +7,7 @@ import com.example.shoppingapp.data.network.provideProductRetrofit
 import com.example.shoppingapp.data.repository.DefaultProductRepository
 import com.example.shoppingapp.data.repository.ProductRepository
 import com.example.shoppingapp.domain.GetProductItemUseCase
+import com.example.shoppingapp.domain.GetProductListUseCase
 import com.example.shoppingapp.presentation.list.ProductListViewModel
 import com.example.shoppingapp.presentation.main.MainViewModel
 import com.example.shoppingapp.presentation.profile.ProfileViewModel
@@ -28,6 +29,7 @@ val appModule = module {
 
     // UseCases
     factory { GetProductItemUseCase(get()) }
+    factory { GetProductListUseCase(get()) }
 
     // Repositories
     // 인터페이스 타입으로 주입받아서 구현을 하게 할 수 있음

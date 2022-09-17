@@ -11,7 +11,13 @@ class DefaultProductRepository(
     private val ioDispatcher: CoroutineDispatcher
 ): ProductRepository {
     override suspend fun getProductList(): List<ProductEntity> = withContext(ioDispatcher) {
-        TODO("Not yet implemented")
+        // response로 받았기 때문에 API를 받고 결과를 아래와 같이 리턴함
+        val response = productApi.getProducts()
+        return@withContext if (response.isSuccessful) {
+            response.body()?.items?.map { it.toEntity() } ?: listOf()
+        } else {
+            listOf()
+        }
     }
 
     override suspend fun getLocalProductList(): List<ProductEntity> = withContext(ioDispatcher) {
