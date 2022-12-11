@@ -1,6 +1,11 @@
 package com.example.deliveryapp.di
 
+import com.example.deliveryapp.data.repository.DefaultRestaurantRepository
+import com.example.deliveryapp.data.repository.RestaurantRepository
 import com.example.deliveryapp.screen.main.home.HomeViewModel
+import com.example.deliveryapp.screen.main.home.restaurant.RestaurantCategory
+import com.example.deliveryapp.screen.main.home.restaurant.RestaurantListFragment
+import com.example.deliveryapp.screen.main.home.restaurant.RestaurantListViewModel
 import com.example.deliveryapp.screen.main.my.MyViewModel
 import com.example.deliveryapp.util.provider.DefaultResourcesProvider
 import com.example.deliveryapp.util.provider.ResourcesProvider
@@ -14,6 +19,10 @@ val appModule = module {
     // ViewModel DI
     viewModel { HomeViewModel() }
     viewModel { MyViewModel() }
+    viewModel { (restaurantCategory: RestaurantCategory) -> RestaurantListViewModel(restaurantCategory, get()) }
+
+    // Repository DI
+    single<RestaurantRepository> { DefaultRestaurantRepository(get(), get()) }
 
     // Network 관련 DI
     single { provideGsonConvertFactory() }
