@@ -8,6 +8,7 @@ import com.example.deliveryapp.screen.base.BaseViewModel
 import com.example.deliveryapp.util.mapper.ModelViewHolderMapper
 import com.example.deliveryapp.util.provider.ResourcesProvider
 import com.example.deliveryapp.widget.adapter.listener.AdapterListener
+import com.example.deliveryapp.widget.adapter.listener.restaurant.RestaurantListListener
 import com.example.deliveryapp.widget.adapter.viewholder.ModelViewHolder
 
 // List형태로 쓸 수 있는 어댑터 추가, ViewHolder, Listener가 들어있고 공통적으로 관리, 여러 List를 관리할 수 있는 클래스
@@ -39,7 +40,7 @@ class ModelRecyclerAdapter<M: Model, VM: BaseViewModel>(
         }
     }
 
-    override fun submitList(list: MutableList<Model>?) {
+    override fun submitList(list: List<Model>?) {
         list?.let {
             modelList = it
         }
