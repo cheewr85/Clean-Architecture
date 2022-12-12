@@ -41,7 +41,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:visibility="gone"
-        tools:visibility="visible"/>
+        tools:visibility="visible"
+        app:tabGravity="fill"
+        app:tabIndicatorFullWidth="false"
+        app:tabMaxWidth="0dp"
+        app:tabMode="auto"/>
 
     <View
         android:layout_width="0dp"
