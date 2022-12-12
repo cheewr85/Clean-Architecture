@@ -14,6 +14,10 @@ class HomeViewModel(
     private val mapRepository: MapRepository
 ): BaseViewModel() {
 
+    companion object {
+        const val MY_LOCATION_KEY = "MyLocation"
+    }
+
     // LiveData로 state 관리
     val homeStateLiveData = MutableLiveData<HomeState>(HomeState.Uninitialized)
 
@@ -33,6 +37,17 @@ class HomeViewModel(
                 R.string.can_not_load_address_info
             )
         }
+    }
+
+    // 받아둔 위치 정보가 있는지 판별하는 함수
+    fun getMapSearchInfo(): MapSearchInfoEntity? {
+        when (val data = homeStateLiveData.value) {
+            is HomeState.Success -> {
+                return data.mapSearchInfo
+            }
+        }
+        // 만약 없다면 null 반환
+        return null
     }
 
 }

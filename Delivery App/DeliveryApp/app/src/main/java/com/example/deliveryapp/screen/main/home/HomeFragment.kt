@@ -2,7 +2,9 @@ package com.example.deliveryapp.screen.main.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -12,10 +14,12 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.example.deliveryapp.R
 import com.example.deliveryapp.data.entity.LocationLatLngEntity
+import com.example.deliveryapp.data.entity.MapSearchInfoEntity
 import com.example.deliveryapp.databinding.FragmentHomeBinding
 import com.example.deliveryapp.screen.base.BaseFragment
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantCategory
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantListFragment
+import com.example.deliveryapp.screen.mylocation.MyLocationActivity
 import com.example.deliveryapp.widget.adapter.RestaurantListFragmentPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -31,6 +35,17 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private lateinit var locationManager: LocationManager
 
     private lateinit var myLocationListener: MyLocationListener
+
+    private val changeLocationLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getParcelableExtra<MapSearchInfoEntity>(HomeViewModel.MY_LOCATION_KEY)
+                    ?.let { myLocationInfo ->
+                        // 위치 바뀐 것을 알려주고 그 위치로 로드함
+                        viewModel.loadReverseGeoInformation(myLocationInfo.locationLatLng)
+                }
+            }
+    }
 
     // 위치권한에 대해서 받아오는 런쳐, 여러 개의 권한을 받아올 수 있게 처리
     private val locationPermissionLauncher =
@@ -55,6 +70,21 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
+    override fun initViews() = with(binding) {
+        // 현재 위치 값 클릭하면 다른 위치를 등록할 수 있는 Activity로 넘어가게함
+        // ViewModel에서 현재 위치 정보가 있는지 확인하고 있을 때 화면 전환을 할 것임
+        locationTitleText.setOnClickListener {
+            viewModel.getMapSearchInfo()?.let { mapInfo ->
+                changeLocationLauncher.launch(
+                    // 해당 인텐트 실행
+                    MyLocationActivity.newIntent(
+                        requireContext(),
+                        mapInfo
+                    )
+                )
+            }
+        }
+    }
 
     // 위치를 불러와 검색을 할 때 씀
     private fun initViewPager(locationLatLng: LocationLatLngEntity) = with(binding) {
