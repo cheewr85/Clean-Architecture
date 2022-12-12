@@ -1,4 +1,4 @@
-package com.example.deliveryapp.data.repository
+package com.example.deliveryapp.data.repository.restaurant
 
 import com.example.deliveryapp.data.entity.RestaurantEntity
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantCategory

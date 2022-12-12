@@ -1,10 +1,11 @@
 package com.example.deliveryapp.di
 
-import com.example.deliveryapp.data.repository.DefaultRestaurantRepository
-import com.example.deliveryapp.data.repository.RestaurantRepository
+import com.example.deliveryapp.data.repository.map.DefaultMapRepository
+import com.example.deliveryapp.data.repository.map.MapRepository
+import com.example.deliveryapp.data.repository.restaurant.DefaultRestaurantRepository
+import com.example.deliveryapp.data.repository.restaurant.RestaurantRepository
 import com.example.deliveryapp.screen.main.home.HomeViewModel
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantCategory
-import com.example.deliveryapp.screen.main.home.restaurant.RestaurantListFragment
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantListViewModel
 import com.example.deliveryapp.screen.main.my.MyViewModel
 import com.example.deliveryapp.util.provider.DefaultResourcesProvider
@@ -17,17 +18,19 @@ import org.koin.dsl.module
 val appModule = module {
 
     // ViewModel DI
-    viewModel { HomeViewModel() }
+    viewModel { HomeViewModel(get()) }
     viewModel { MyViewModel() }
     viewModel { (restaurantCategory: RestaurantCategory) -> RestaurantListViewModel(restaurantCategory, get()) }
 
     // Repository DI
     single<RestaurantRepository> { DefaultRestaurantRepository(get(), get()) }
+    single<MapRepository> { DefaultMapRepository(get(), get()) }
 
     // Network 관련 DI
     single { provideGsonConvertFactory() }
     single { buildOkHttpClient() }
-    single { provideRetrofit(get(), get()) }
+    single { provideMapRetrofit(get(), get()) }
+    single { provideMapApiService(get())}
 
     // ResourceProvider DI, Context를 주입함
     single<ResourcesProvider> { DefaultResourcesProvider(androidApplication()) }

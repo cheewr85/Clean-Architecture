@@ -8,7 +8,10 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import com.example.deliveryapp.R
+import com.example.deliveryapp.data.entity.LocationLatLngEntity
 import com.example.deliveryapp.databinding.FragmentHomeBinding
 import com.example.deliveryapp.screen.base.BaseFragment
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantCategory
@@ -52,13 +55,9 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
-    override fun initViews() {
-        super.initViews()
-        initViewPager()
-    }
 
     // 위치를 불러와 검색을 할 때 씀
-    private fun initViewPager() = with(binding) {
+    private fun initViewPager(locationLatLng: LocationLatLngEntity) = with(binding) {
         val restaurantCategories = RestaurantCategory.values()
 
         // viewpager adapter가 초기화되어 있지 않으면 초기화함
@@ -86,8 +85,31 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     override fun observeData() = viewModel.homeStateLiveData.observe(viewLifecycleOwner) {
         // state상태에 따라 데이터 처리(권한이 있으면 위치를 불러옴)
         when(it) {
-            HomeState.Uninitialized -> {
+            is HomeState.Uninitialized -> {
                 getMyLocation()
+            }
+            is HomeState.Loading -> {
+                // 로딩중일 때 프로그래스바 처리
+                binding.locationLoading.isVisible = true
+                binding.locationTitleText.text = getString(R.string.loading)
+            }
+            is HomeState.Success -> {
+                // 성공한 경우, 로딩바를 없애고 위치를 나타내고 ViewPager를 초기화함
+                binding.locationLoading.isGone = true
+                binding.locationTitleText.text = it.mapSearchInfo.fullAddress
+                binding.tabLayout.isVisible = true
+                binding.filterScrollView.isVisible = true
+                binding.viewPager.isVisible = true
+                initViewPager(it.mapSearchInfo.locationLatLng)
+            }
+            is HomeState.Error -> {
+                binding.locationLoading.isGone = true
+                binding.locationTitleText.setText(R.string.can_not_load_address_info)
+                // 에러가 뜬 경우 다시 위치 정보를 불러오게 함
+                binding.locationTitleText.setOnClickListener {
+                    getMyLocation()
+                }
+                Toast.makeText(requireContext(), it.messageId, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -150,7 +172,13 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     inner class MyLocationListener: LocationListener {
         // 위치 바뀌면 데이터를 처리해주면 됨
         override fun onLocationChanged(location: Location) {
-            binding.locationTitleText.text = "${location.latitude}, ${location.longitude}"
+            viewModel.loadReverseGeoInformation(
+                // Entity에 위도 & 경도값을 넘겨주면 됨
+                LocationLatLngEntity(
+                    location.latitude,
+                    location.longitude
+                )
+            )
             removeLocationListener()
         }
     }
