@@ -6,6 +6,7 @@ import com.example.deliveryapp.R
 import com.example.deliveryapp.data.entity.LocationLatLngEntity
 import com.example.deliveryapp.data.entity.MapSearchInfoEntity
 import com.example.deliveryapp.data.repository.map.MapRepository
+import com.example.deliveryapp.data.repository.user.UserRepository
 import com.example.deliveryapp.screen.base.BaseViewModel
 import com.example.deliveryapp.screen.main.home.HomeState
 import kotlinx.coroutines.Job
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 // 인텐트로 넘어오면 데이터를 불러와서 뿌려줌
 class MyLocationViewModel(
     private val mapSearchInfoEntity: MapSearchInfoEntity,
-    private val mapRepository: MapRepository
+    private val mapRepository: MapRepository,
+    private val userRepository: UserRepository
 ) : BaseViewModel() {
 
     val myLocationStateLiveData = MutableLiveData<MyLocationState>(MyLocationState.Uninitialized)
@@ -46,8 +48,9 @@ class MyLocationViewModel(
     // 위치를 바꿀 경우 그것을 반영하기 위한 함수
     fun confirmSelectLocation() = viewModelScope.launch {
         when (val data = myLocationStateLiveData.value) {
-            // 내 유저에 반영해서 넣어줄 것임
+            // 내 유저에 반영해서 넣어줄 것임(위치 비교해서 다르면 반영)
             is MyLocationState.Success -> {
+                userRepository.insertUserLocation(data.mapSearchInfoEntity.locationLatLng)
                 myLocationStateLiveData.value = MyLocationState.Confirm(
                     data.mapSearchInfoEntity
                 )

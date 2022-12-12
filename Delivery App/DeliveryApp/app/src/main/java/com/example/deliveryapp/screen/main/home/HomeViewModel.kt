@@ -6,12 +6,14 @@ import com.example.deliveryapp.R
 import com.example.deliveryapp.data.entity.LocationLatLngEntity
 import com.example.deliveryapp.data.entity.MapSearchInfoEntity
 import com.example.deliveryapp.data.repository.map.MapRepository
+import com.example.deliveryapp.data.repository.user.UserRepository
 import com.example.deliveryapp.screen.base.BaseViewModel
 import kotlinx.coroutines.launch
 
 // state 패턴 활용
 class HomeViewModel(
-    private val mapRepository: MapRepository
+    private val mapRepository: MapRepository,
+    private val userRepository: UserRepository
 ): BaseViewModel() {
 
     companion object {
@@ -25,11 +27,16 @@ class HomeViewModel(
     fun loadReverseGeoInformation(locationLatLngEntity: LocationLatLngEntity) = viewModelScope.launch {
         // 불러올 때 로딩중 처리함
         homeStateLiveData.value = HomeState.Loading
-        // 넘겨받은 결과값 확인
-        val addressInfo = mapRepository.getReverseGeoInformation(locationLatLngEntity)
+        // DB에 저장된 유저 정보 가져옴
+        val userLocation = userRepository.getUserLocation()
+        val currentLocation = userLocation ?: locationLatLngEntity
+
+        // 넘겨받은 결과값 확인, 기존의 위치와 비교하여 내 위치가 맞는지도 확인
+        val addressInfo = mapRepository.getReverseGeoInformation(currentLocation)
         addressInfo?.let { info ->
             homeStateLiveData.value = HomeState.Success(
-                mapSearchInfo = info.toSearchInfoEntity(locationLatLngEntity)
+                mapSearchInfo = info.toSearchInfoEntity(locationLatLngEntity),
+                isLocationSame = currentLocation == locationLatLngEntity
             )
         } ?: kotlin.run {
             // 만약 정보가 없다면 에러처리

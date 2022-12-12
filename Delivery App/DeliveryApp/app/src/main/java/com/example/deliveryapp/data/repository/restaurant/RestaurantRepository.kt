@@ -1,5 +1,6 @@
 package com.example.deliveryapp.data.repository.restaurant
 
+import com.example.deliveryapp.data.entity.LocationLatLngEntity
 import com.example.deliveryapp.data.entity.RestaurantEntity
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantCategory
 
@@ -8,6 +9,7 @@ interface RestaurantRepository {
 
     // 특정 타입에 맞는 식당 리스트를 가져옴
     suspend fun getList(
-        restaurantCategory: RestaurantCategory
+        restaurantCategory: RestaurantCategory,
+        locationLatLngEntity: LocationLatLngEntity
     ): List<RestaurantEntity>
 }

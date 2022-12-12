@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -93,23 +92,31 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         // viewpager adapter가 초기화되어 있지 않으면 초기화함
         if (::viewPagerAdapter.isInitialized.not()) {
             val restaurantListFragmentList = restaurantCategories.map {
-                RestaurantListFragment.newInstance(it)
+                RestaurantListFragment.newInstance(it, locationLatLng)
             }
 
             viewPagerAdapter = RestaurantListFragmentPagerAdapter(
                 this@HomeFragment,
-                restaurantListFragmentList
+                restaurantListFragmentList,
+                locationLatLng
             )
             viewPager.adapter = viewPagerAdapter
+            // tabLayout에서 ViewPager를 뿌림
+            // 페이지 바뀔 때마다 한 번 만들어지면 계속 쓸 수 있게함
+            viewPager.offscreenPageLimit = restaurantCategories.size
+            // TabLayout에 Tab들을 뿌려주게함
+            TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+                tab.setText(restaurantCategories[position].categoryNameId)
+            }.attach()
         }
-
-        // tabLayout에서 ViewPager를 뿌림
-        // 페이지 바뀔 때마다 한 번 만들어지면 계속 쓸 수 있게함
-        viewPager.offscreenPageLimit = restaurantCategories.size
-        // TabLayout에 Tab들을 뿌려주게함
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.setText(restaurantCategories[position].categoryNameId)
-        }.attach()
+        // 조건문으로 ViewPager와 위치가 다를 경우 API 호출해서 식당 리스트 갱신함
+        if (locationLatLng != viewPagerAdapter.locationLatLngEntity) {
+            viewPagerAdapter.locationLatLngEntity = locationLatLng
+            // 위치값이 변경된 것임을 알려줌
+            viewPagerAdapter.fragmentList.forEach {
+                it.viewModel.setLocationLatLng(locationLatLng)
+            }
+        }
     }
 
     override fun observeData() = viewModel.homeStateLiveData.observe(viewLifecycleOwner) {
@@ -131,6 +138,9 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 binding.filterScrollView.isVisible = true
                 binding.viewPager.isVisible = true
                 initViewPager(it.mapSearchInfo.locationLatLng)
+                if (it.isLocationSame.not()) {
+                    Toast.makeText(requireContext(), R.string.please_set_your_current_location, Toast.LENGTH_SHORT).show()
+                }
             }
             is HomeState.Error -> {
                 binding.locationLoading.isGone = true

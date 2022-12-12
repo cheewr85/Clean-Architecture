@@ -11,7 +11,9 @@ sealed class HomeState {
     object Loading: HomeState()
 
     data class Success(
-        val mapSearchInfo: MapSearchInfoEntity
+        val mapSearchInfo: MapSearchInfoEntity,
+        // 내 위치가 GPS상 위치와 같은지 체크하는 변수
+        val isLocationSame: Boolean
     ): HomeState()
 
     data class Error(

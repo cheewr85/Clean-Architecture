@@ -2,12 +2,14 @@ package com.example.deliveryapp.widget.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.deliveryapp.data.entity.LocationLatLngEntity
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantListFragment
 
 // fragment를 넘겨줘서 attach되는 형태로 Pager에 적용됨
 class RestaurantListFragmentPagerAdapter(
     fragment: Fragment,
-    val fragmentList: List<RestaurantListFragment>
+    val fragmentList: List<RestaurantListFragment>,
+    var locationLatLngEntity: LocationLatLngEntity
 ): FragmentStateAdapter(fragment) {
 
     override fun getItemCount(): Int = fragmentList.size
