@@ -18,6 +18,7 @@ import com.example.deliveryapp.databinding.FragmentHomeBinding
 import com.example.deliveryapp.screen.base.BaseFragment
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantCategory
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantListFragment
+import com.example.deliveryapp.screen.main.home.restaurant.RestaurantOrder
 import com.example.deliveryapp.screen.mylocation.MyLocationActivity
 import com.example.deliveryapp.widget.adapter.RestaurantListFragmentPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
@@ -83,7 +84,40 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 )
             }
         }
+        // Chip의 타입이 바뀔 때마다 리스너를 달아서 정렬을 해 줄 것임
+        orderChipGroup.setOnCheckedChangeListener { _, checkedId ->
+            // Chip 상태에 따라 UI를 바꿔주기 위해 해당 값을 가져옴
+            when (checkedId) {
+                R.id.chipDefault -> {
+                    chipInitialize.isGone = true
+                    changeRestaurantOrder(RestaurantOrder.DEFAULT)
+                }
+                R.id.chipInitialize -> {
+                    chipDefault.isChecked = true
+                }
+                R.id.chipLowDeliveryTip -> {
+                    chipInitialize.isVisible = true
+                    changeRestaurantOrder(RestaurantOrder.LOW_DELIVERY_TIP)
+                }
+                R.id.chipFastDelivery -> {
+                    chipInitialize.isVisible = true
+                    changeRestaurantOrder(RestaurantOrder.FAST_DELIVERY)
+                }
+                R.id.chipTopRate -> {
+                    chipInitialize.isVisible = true
+                    changeRestaurantOrder(RestaurantOrder.TOP_RATE)
+                }
+            }
+        }
     }
+
+    // Order에 상태에 따른 enum class로 상태에 따라 변경되게 처리함
+   private fun changeRestaurantOrder(order: RestaurantOrder) {
+        // 상태에 맞춰서 정렬을 위해 ViewPager에서 List에서 ViewModel에 설정함
+       viewPagerAdapter.fragmentList.forEach {
+           it.viewModel.setRestaurantOrder(order)
+       }
+   }
 
     // 위치를 불러와 검색을 할 때 씀
     private fun initViewPager(locationLatLng: LocationLatLngEntity) = with(binding) {
@@ -91,6 +125,7 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         // viewpager adapter가 초기화되어 있지 않으면 초기화함
         if (::viewPagerAdapter.isInitialized.not()) {
+            orderChipGroup.isVisible = true
             val restaurantListFragmentList = restaurantCategories.map {
                 RestaurantListFragment.newInstance(it, locationLatLng)
             }
