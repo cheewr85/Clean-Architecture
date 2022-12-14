@@ -5,7 +5,6 @@
         <item name="toolbarWithArrowButtonStyle">@style/Widget.DeliveryApp.Toolbar.WithArrow</item>
         <item name="toolbarWithCloseButtonStyle">@style/Widget.DeliveryApp.Toolbar.WithClose</item>
 
-
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -17,5 +16,11 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="Theme.DeliveryApp">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/black</item>
+        <item name="android:background">@null</item>
     </style>
 </resources>

@@ -6,6 +6,7 @@ import com.example.deliveryapp.data.entity.LocationLatLngEntity
 import com.example.deliveryapp.databinding.FragmentRestaurantListBinding
 import com.example.deliveryapp.model.restaurant.RestaurantModel
 import com.example.deliveryapp.screen.base.BaseFragment
+import com.example.deliveryapp.screen.main.home.restaurant.detail.RestaurantDetailActivity
 import com.example.deliveryapp.util.provider.ResourcesProvider
 import com.example.deliveryapp.widget.adapter.ModelRecyclerAdapter
 import com.example.deliveryapp.widget.adapter.listener.restaurant.RestaurantListListener
@@ -40,7 +41,13 @@ class RestaurantListFragment :
             resourcesProvider,
             adapterListener = object : RestaurantListListener {
                 override fun onClickItem(model: RestaurantModel) {
-                    Toast.makeText(requireContext(), "$model", Toast.LENGTH_SHORT).show()
+                    // 선택한 아이템 기준으로 상세화면으로 넘어감, List로 받은 값을 Entity로 변환해서 넘겨줌
+                    startActivity(
+                        RestaurantDetailActivity.newIntent(
+                            requireContext(),
+                            model.toEntity()
+                        )
+                    )
                 }
             })
     }
@@ -59,6 +66,7 @@ class RestaurantListFragment :
         // bundle위한 키값
         const val RESTAURANT_CATEGORY_KEY = "restaurantCategory"
         const val LOCATION_KEY = "location"
+        const val RESTAURANT_KEY = "Restaurant"
 
         // argument로 bundle로 담아서 Fragment를 꺼내주면 됨
         fun newInstance(
