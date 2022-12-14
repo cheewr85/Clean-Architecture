@@ -29,12 +29,12 @@ val appModule = module {
     viewModel { MyViewModel() }
     viewModel { (restaurantCategory: RestaurantCategory, locationLatLng: LocationLatLngEntity) -> RestaurantListViewModel(restaurantCategory, locationLatLng, get()) }
     viewModel { (mapSearchInfoEntity: MapSearchInfoEntity) -> MyLocationViewModel(mapSearchInfoEntity, get(), get())}
-    viewModel { (restaurantEntity: RestaurantEntity) -> RestaurantDetailViewModel(restaurantEntity)}
+    viewModel { (restaurantEntity: RestaurantEntity) -> RestaurantDetailViewModel(restaurantEntity, get())}
 
     // Repository DI
     single<RestaurantRepository> { DefaultRestaurantRepository(get(), get(), get()) }
     single<MapRepository> { DefaultMapRepository(get(), get()) }
-    single<UserRepository> { DefaultUserRepository(get(), get())}
+    single<UserRepository> { DefaultUserRepository(get(), get(), get())}
 
     // Network 관련 DI
     single { provideGsonConvertFactory() }
@@ -45,6 +45,7 @@ val appModule = module {
     // RoomDB 관련 DI
     single { provideDB(androidApplication()) }
     single { provideLocationDao(get()) }
+    single { provideRestaurantDao(get()) }
 
     // ResourceProvider DI, Context를 주입함
     single<ResourcesProvider> { DefaultResourcesProvider(androidApplication()) }
