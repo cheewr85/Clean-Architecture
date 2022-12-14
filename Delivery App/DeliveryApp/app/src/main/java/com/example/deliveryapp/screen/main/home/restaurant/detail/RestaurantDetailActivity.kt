@@ -2,6 +2,7 @@ package com.example.deliveryapp.screen.main.home.restaurant.detail
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import com.example.deliveryapp.R
@@ -60,7 +61,12 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
         toolbar.setNavigationOnClickListener { finish() }
         // 각각 버튼에 따른 기능 구현
         callButton.setOnClickListener {
-
+            // viewModel에서 전화번호 값을 가져옴
+            viewModel.getRestaurantTelNumber()?.let { telNumber ->
+                // 인텐트로 해당 전화번호로 전화를 걸게끔 처리함
+                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$telNumber"))
+                startActivity(intent)
+            }
         }
         likeButton.setOnClickListener {
 

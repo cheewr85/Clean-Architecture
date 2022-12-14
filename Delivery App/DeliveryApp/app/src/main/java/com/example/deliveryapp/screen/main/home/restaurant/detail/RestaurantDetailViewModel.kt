@@ -18,4 +18,14 @@ class RestaurantDetailViewModel(
             restaurantEntity = restaurantEntity
         )
     }
+
+    // 전화번호 가져오는 함수, 성공한 경우에만 넘겨줌
+    fun getRestaurantTelNumber(): String? {
+        return when (val data = restaurantDetailStateLiveData.value) {
+            is RestaurantDetailState.Success -> {
+                data.restaurantEntity.restaurantTelNumber
+            }
+            else -> null
+        }
+    }
 }
