@@ -1,5 +1,6 @@
 package com.example.deliveryapp.screen.main.home.restaurant.detail
 
+import android.content.ClipDescription.MIMETYPE_TEXT_PLAIN
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -72,7 +73,23 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
             viewModel.toggleLikedRestaurant()
         }
         shareButton.setOnClickListener {
-
+            // restaurant 정보가 있으면 Intent로 담아서 처리함
+            viewModel.getRestaurantInfo()?.let { restaurantInfo ->
+                // 공유하기 위한 인텐트 활용
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    // text plain의 상수값을 가져오기 위한 타입처리
+                    type = MIMETYPE_TEXT_PLAIN
+                    putExtra(
+                        Intent.EXTRA_TEXT,
+                        "맛있는 음식점 : ${restaurantInfo.restaurantTitle}" +
+                                "\n평점 : ${restaurantInfo.grade}" +
+                                "\n연락처 : ${restaurantInfo.restaurantTelNumber}"
+                    )
+                    // 공유하는 모달 띄움
+                    Intent.createChooser(this, "친구에게 공유하기")
+                }
+                startActivity(intent)
+            }
         }
     }
 
