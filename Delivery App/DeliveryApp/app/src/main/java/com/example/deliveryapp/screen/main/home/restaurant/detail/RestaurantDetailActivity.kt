@@ -6,21 +6,29 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import com.example.deliveryapp.R
 import com.example.deliveryapp.data.entity.RestaurantEntity
+import com.example.deliveryapp.data.entity.RestaurantFoodEntity
 import com.example.deliveryapp.databinding.ActivityRestaurantDetailBinding
 import com.example.deliveryapp.extensions.fromDpToPx
 import com.example.deliveryapp.extensions.load
 import com.example.deliveryapp.screen.base.BaseActivity
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantListFragment
+import com.example.deliveryapp.screen.main.home.restaurant.detail.menu.RestaurantMenuListFragment
+import com.example.deliveryapp.screen.main.home.restaurant.detail.review.RestaurantReviewListFragment
+import com.example.deliveryapp.widget.adapter.RestaurantDetailListFragmentPagerAdapter
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.math.abs
 
-class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, ActivityRestaurantDetailBinding>() {
+class RestaurantDetailActivity :
+    BaseActivity<RestaurantDetailViewModel, ActivityRestaurantDetailBinding>() {
 
-    override fun getViewBinding(): ActivityRestaurantDetailBinding = ActivityRestaurantDetailBinding.inflate(layoutInflater)
+    override fun getViewBinding(): ActivityRestaurantDetailBinding =
+        ActivityRestaurantDetailBinding.inflate(layoutInflater)
 
     override val viewModel by viewModel<RestaurantDetailViewModel> {
         parametersOf(
@@ -30,15 +38,19 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
 
     // Intent 처리를 원활하게 하기 위한 객체 생성
     companion object {
-        fun newIntent(context: Context, restaurantEntity: RestaurantEntity) = Intent(context, RestaurantDetailActivity::class.java).apply {
-            putExtra(RestaurantListFragment.RESTAURANT_KEY, restaurantEntity)
-        }
+        fun newIntent(context: Context, restaurantEntity: RestaurantEntity) =
+            Intent(context, RestaurantDetailActivity::class.java).apply {
+                putExtra(RestaurantListFragment.RESTAURANT_KEY, restaurantEntity)
+            }
     }
 
     // View 초기화
     override fun initViews() {
         initAppBar()
     }
+
+    // ViewPagerAdapter 초기화
+    private lateinit var viewPagerAdapter: RestaurantDetailListFragmentPagerAdapter
 
     // Appbar 반영, 넘겨받은 값을 바탕으로 appBar의 변경사항을 처리함
     private fun initAppBar() = with(binding) {
@@ -49,7 +61,8 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
             val abstractOffset = abs(verticalOffset)
 
             // Collapsing 되는 상태를 무한정 되지 않게 스크롤 크기를 제한하고 스무스하게 넘기게 처리함
-            val realAlphaVerticalOffset: Float = if (abstractOffset - topPadding < 0) 0f else abstractOffset - topPadding
+            val realAlphaVerticalOffset: Float =
+                if (abstractOffset - topPadding < 0) 0f else abstractOffset - topPadding
 
             if (abstractOffset < topPadding) {
                 restaurantTitleTextView.alpha = 0f
@@ -57,7 +70,8 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
             }
 
             val percentage = realAlphaVerticalOffset / realAlphaScrollHeight
-            restaurantTitleTextView.alpha = 1 - (if (1 - percentage * 2 < 0) 0f else 1 - percentage * 2)
+            restaurantTitleTextView.alpha =
+                1 - (if (1 - percentage * 2 < 0) 0f else 1 - percentage * 2)
         })
         toolbar.setNavigationOnClickListener { finish() }
         // 각각 버튼에 따른 기능 구현
@@ -95,13 +109,24 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
 
     override fun observeData() = viewModel.restaurantDetailStateLiveData.observe(this) {
         when (it) {
+            // Loading 시 ProgressBar 처리
+            is RestaurantDetailState.Loading -> {
+                handleLoading()
+            }
             is RestaurantDetailState.Success -> {
                 handleSuccess(it)
             }
+            else -> Unit
         }
     }
 
+    private fun handleLoading() = with(binding) {
+        progressBar.isVisible = true
+    }
+
     private fun handleSuccess(state: RestaurantDetailState.Success) = with(binding) {
+        progressBar.isGone = true
+
         val restaurantEntity = state.restaurantEntity
 
         // 성공했을 때 UI 처리
@@ -111,16 +136,60 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
         restaurantMainTitleTextView.text = restaurantEntity.restaurantTitle
         ratingBar.rating = restaurantEntity.grade
         // 범위를 표현하기 위해 string 값에 $ 사인을 씀
-        deliveryTimeText.text = getString(R.string.delivery_expected_time, restaurantEntity.deliveryTimeRange.first, restaurantEntity.deliveryTimeRange.second)
-        deliveryTipText.text = getString(R.string.delivery_tip_range, restaurantEntity.deliveryTipRange.first, restaurantEntity.deliveryTipRange.second)
+        deliveryTimeText.text = getString(
+            R.string.delivery_expected_time,
+            restaurantEntity.deliveryTimeRange.first,
+            restaurantEntity.deliveryTimeRange.second
+        )
+        deliveryTipText.text = getString(
+            R.string.delivery_tip_range,
+            restaurantEntity.deliveryTipRange.first,
+            restaurantEntity.deliveryTipRange.second
+        )
         // like에 대해서 Drawable을 불러와서 적용하게끔 state와 함께 처리함
         likeText.setCompoundDrawablesWithIntrinsicBounds(
-            ContextCompat.getDrawable(this@RestaurantDetailActivity, if (state.isLiked == true) {
-                R.drawable.ic_heart_enable
-            } else {
-                R.drawable.ic_heart_disable
-            }),
+            ContextCompat.getDrawable(
+                this@RestaurantDetailActivity, if (state.isLiked == true) {
+                    R.drawable.ic_heart_enable
+                } else {
+                    R.drawable.ic_heart_disable
+                }
+            ),
             null, null, null
         )
+
+        // ViewPager가 초기화 되어 지 않다면 초기화 진행
+        if (::viewPagerAdapter.isInitialized.not()) {
+            initViewPager(state.restaurantEntity.restaurantInfoId, state.restaurantFoodList)
+        }
+    }
+
+    // 상세화면에서 식당 메뉴에 대해서 담고 있는 ViewPager 초기화
+    private fun initViewPager(
+        // InfoId와 FoodList는 각각 프래그먼트를 만들어서 처리함
+        restaurantInfoId: Long,
+        restaurantFoodList: List<RestaurantFoodEntity>?
+    ) {
+        // ViewPager 초기화 진행
+        viewPagerAdapter = RestaurantDetailListFragmentPagerAdapter(
+            this,
+            listOf(
+                RestaurantMenuListFragment.newInstance(
+                    restaurantInfoId,
+                    ArrayList(restaurantFoodList ?: listOf())
+                ),
+                RestaurantReviewListFragment.newInstance(
+                    restaurantInfoId
+                )
+            )
+        )
+        binding.menuAndReviewViewPager.adapter = viewPagerAdapter
+        // tab의 내용을 Category의 따라서 처리함
+        TabLayoutMediator(
+            binding.menuAndReviewTabLayout,
+            binding.menuAndReviewViewPager
+        ) { tab, position ->
+            tab.setText(RestaurantCategoryDetail.values()[position].categoryNameId)
+        }.attach()
     }
 }

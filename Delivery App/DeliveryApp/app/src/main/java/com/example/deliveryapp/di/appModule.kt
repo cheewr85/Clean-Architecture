@@ -3,6 +3,7 @@ package com.example.deliveryapp.di
 import com.example.deliveryapp.data.entity.LocationLatLngEntity
 import com.example.deliveryapp.data.entity.MapSearchInfoEntity
 import com.example.deliveryapp.data.entity.RestaurantEntity
+import com.example.deliveryapp.data.entity.RestaurantFoodEntity
 import com.example.deliveryapp.data.repository.map.DefaultMapRepository
 import com.example.deliveryapp.data.repository.map.MapRepository
 import com.example.deliveryapp.data.repository.restaurant.DefaultRestaurantRepository
@@ -15,6 +16,8 @@ import com.example.deliveryapp.screen.main.home.HomeViewModel
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantCategory
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantListViewModel
 import com.example.deliveryapp.screen.main.home.restaurant.detail.RestaurantDetailViewModel
+import com.example.deliveryapp.screen.main.home.restaurant.detail.menu.RestaurantMenuListViewModel
+import com.example.deliveryapp.screen.main.home.restaurant.detail.review.RestaurantReviewListViewModel
 import com.example.deliveryapp.screen.main.my.MyViewModel
 import com.example.deliveryapp.screen.mylocation.MyLocationViewModel
 import com.example.deliveryapp.util.provider.DefaultResourcesProvider
@@ -33,6 +36,8 @@ val appModule = module {
     viewModel { (restaurantCategory: RestaurantCategory, locationLatLng: LocationLatLngEntity) -> RestaurantListViewModel(restaurantCategory, locationLatLng, get()) }
     viewModel { (mapSearchInfoEntity: MapSearchInfoEntity) -> MyLocationViewModel(mapSearchInfoEntity, get(), get())}
     viewModel { (restaurantEntity: RestaurantEntity) -> RestaurantDetailViewModel(restaurantEntity, get(), get())}
+    viewModel { (restaurantId: Long, restaurantFoodList: List<RestaurantFoodEntity>) -> RestaurantMenuListViewModel(restaurantId, restaurantFoodList) }
+    viewModel { RestaurantReviewListViewModel() }
 
     // Repository DI
     single<RestaurantRepository> { DefaultRestaurantRepository(get(), get(), get()) }
