@@ -3,6 +3,7 @@ package com.example.deliveryapp.screen.main.home.restaurant.detail
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.deliveryapp.data.entity.RestaurantEntity
+import com.example.deliveryapp.data.repository.restaurant.food.RestaurantFoodRepository
 import com.example.deliveryapp.data.repository.user.UserRepository
 import com.example.deliveryapp.screen.base.BaseViewModel
 import kotlinx.coroutines.Job
@@ -10,6 +11,7 @@ import kotlinx.coroutines.launch
 
 class RestaurantDetailViewModel(
     private val restaurantEntity: RestaurantEntity,
+    private val restaurantFoodRepository: RestaurantFoodRepository,
     private val userRepository: UserRepository
 ) : BaseViewModel() {
 
@@ -20,10 +22,13 @@ class RestaurantDetailViewModel(
             restaurantEntity = restaurantEntity
         )
         restaurantDetailStateLiveData.value = RestaurantDetailState.Loading
+        val foods = restaurantFoodRepository.getFoods(restaurantId = restaurantEntity.restaurantInfoId)
         // 찜이 눌렀는지 확인
         val isLiked = userRepository.getUserLikedRestaurant(restaurantEntity.restaurantTitle) != null
+        // 성공했을 경우 해당 Entity와 음식점의 음식 목록 좋아요 상태를 넘겨줌
         restaurantDetailStateLiveData.value = RestaurantDetailState.Success(
             restaurantEntity = restaurantEntity,
+            restaurantFoodList = foods,
             isLiked = isLiked
         )
     }
