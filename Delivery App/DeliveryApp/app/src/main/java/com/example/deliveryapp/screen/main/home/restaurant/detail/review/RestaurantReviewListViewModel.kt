@@ -3,6 +3,7 @@ package com.example.deliveryapp.screen.main.home.restaurant.detail.review
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.deliveryapp.data.repository.restaurant.review.RestaurantReviewRepository
+import com.example.deliveryapp.model.restaurant.review.RestaurantReviewModel
 import com.example.deliveryapp.screen.base.BaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -18,7 +19,15 @@ class RestaurantReviewListViewModel(
         reviewStateLiveData.value = RestaurantReviewState.Loading
         val reviews = restaurantReviewRepository.getReviews(restaurantTitle)
         reviewStateLiveData.value = RestaurantReviewState.Success(
-            reviews
+            reviews.map {
+                RestaurantReviewModel(
+                    id = it.id,
+                    title = it.title,
+                    description = it.description,
+                    grade = it.grade,
+                    thumbnailImageUri = it.images?.first()
+                )
+            }
         )
     }
 
