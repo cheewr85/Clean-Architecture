@@ -26,6 +26,7 @@
         <entry key="app/src/main/res/layout/viewholder_empty.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/layout/viewholder_food_menu.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/layout/viewholder_restaurant.xml" value="0.19610507246376813" />
+        <entry key="app/src/main/res/layout/viewholder_restaurant_review.xml" value="0.19610507246376813" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.24583333333333332" />
       </map>
     </option>
