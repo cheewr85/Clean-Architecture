@@ -9,6 +9,7 @@ import com.example.deliveryapp.model.restaurant.food.FoodModel
 import com.example.deliveryapp.screen.base.BaseViewModel
 import com.example.deliveryapp.util.provider.ResourcesProvider
 import com.example.deliveryapp.widget.adapter.listener.AdapterListener
+import com.example.deliveryapp.widget.adapter.listener.restaurant.FoodMenuListListener
 import com.example.deliveryapp.widget.adapter.viewholder.ModelViewHolder
 
 class FoodMenuViewHolder(
@@ -33,6 +34,11 @@ class FoodMenuViewHolder(
     }
 
     override fun bindViews(model: FoodModel, adapterListener: AdapterListener) {
-        TODO("Not yet implemented")
+        // FoodMenuList일 경우 해당 model을 어댑터 리스너에 넣어주면 됨
+        if (adapterListener is FoodMenuListListener) {
+            binding.root.setOnClickListener {
+                adapterListener.onClickItem(model)
+            }
+        }
     }
 }

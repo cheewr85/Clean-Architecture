@@ -1,14 +1,17 @@
 package com.example.deliveryapp.screen.main.home.restaurant.detail.menu
 
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import com.example.deliveryapp.data.entity.RestaurantFoodEntity
 import com.example.deliveryapp.databinding.FragmentListBinding
 import com.example.deliveryapp.model.restaurant.food.FoodModel
 import com.example.deliveryapp.screen.base.BaseFragment
+import com.example.deliveryapp.screen.main.home.restaurant.detail.RestaurantDetailViewModel
 import com.example.deliveryapp.util.provider.ResourcesProvider
 import com.example.deliveryapp.widget.adapter.ModelRecyclerAdapter
-import com.example.deliveryapp.widget.adapter.listener.AdapterListener
+import com.example.deliveryapp.widget.adapter.listener.restaurant.FoodMenuListListener
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -26,6 +29,9 @@ class RestaurantMenuListFragment: BaseFragment<RestaurantMenuListViewModel,Fragm
         )
     }
 
+    // 장바구니 처리를 위해 상위 ViewModel에 접근
+    private val restaurantDetailViewModel by sharedViewModel<RestaurantDetailViewModel>()
+
     private val resourcesProvider by inject<ResourcesProvider>()
 
     // RecyclerView Adapter 초기화
@@ -34,7 +40,11 @@ class RestaurantMenuListFragment: BaseFragment<RestaurantMenuListViewModel,Fragm
             listOf(),
             viewModel,
             resourcesProvider,
-            adapterListener = object : AdapterListener {
+            adapterListener = object : FoodMenuListListener {
+                // 클릭시 장바구니에 추가됨
+                override fun onClickItem(model: FoodModel) {
+                    viewModel.insertMenuInBasket(model)
+                }
 
             }
         )
@@ -44,8 +54,23 @@ class RestaurantMenuListFragment: BaseFragment<RestaurantMenuListViewModel,Fragm
         binding.recyclerView.adapter = adapter
     }
 
-    override fun observeData() = viewModel.restaurantFoodListLiveData.observe(this) {
-        adapter.submitList(it)
+    override fun observeData() {
+
+        viewModel.restaurantFoodListLiveData.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+        }
+
+        viewModel.menuBasketLiveData.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), "장바구니에 담겼습니다. 메뉴 : ${it.title}", Toast.LENGTH_SHORT).show()
+            // 상세화면에 장바구니에 추가했다고 알려주는 함수 호출
+            restaurantDetailViewModel.notifyFoodMenuListInBasket(it)
+        }
+
+        viewModel.isClearNeedInBasketLiveData.observe(viewLifecycleOwner) { (isClearNeed, afterAction) ->
+            if (isClearNeed) {
+                restaurantDetailViewModel.notifyClearNeedAlertInBasket(isClearNeed, afterAction)
+            }
+        }
     }
 
     companion object {

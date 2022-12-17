@@ -3,6 +3,7 @@ package com.example.deliveryapp.screen.main.home.restaurant.detail
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.deliveryapp.data.entity.RestaurantEntity
+import com.example.deliveryapp.data.entity.RestaurantFoodEntity
 import com.example.deliveryapp.data.repository.restaurant.food.RestaurantFoodRepository
 import com.example.deliveryapp.data.repository.user.UserRepository
 import com.example.deliveryapp.screen.base.BaseViewModel
@@ -23,12 +24,15 @@ class RestaurantDetailViewModel(
         )
         restaurantDetailStateLiveData.value = RestaurantDetailState.Loading
         val foods = restaurantFoodRepository.getFoods(restaurantId = restaurantEntity.restaurantInfoId)
+        // 장바구니에 있는 값 확인함
+        val foodMenuListInBasket = restaurantFoodRepository.getAllFoodMenuListInBasket()
         // 찜이 눌렀는지 확인
         val isLiked = userRepository.getUserLikedRestaurant(restaurantEntity.restaurantTitle) != null
         // 성공했을 경우 해당 Entity와 음식점의 음식 목록 좋아요 상태를 넘겨줌
         restaurantDetailStateLiveData.value = RestaurantDetailState.Success(
             restaurantEntity = restaurantEntity,
             restaurantFoodList = foods,
+            foodMenuListInBasket = foodMenuListInBasket,
             isLiked = isLiked
         )
     }
@@ -70,6 +74,45 @@ class RestaurantDetailViewModel(
                 data.restaurantEntity
             }
             else -> null
+        }
+    }
+
+    fun notifyFoodMenuListInBasket(foodMenu: RestaurantFoodEntity) = viewModelScope.launch {
+        when (val data = restaurantDetailStateLiveData.value) {
+            is RestaurantDetailState.Success -> {
+                restaurantDetailStateLiveData.value = data.copy(
+                    foodMenuListInBasket = data.foodMenuListInBasket?.toMutableList()?.apply {
+                        add(foodMenu)
+                    }
+                )
+            }
+            else -> Unit
+        }
+    }
+
+    // 장바구니 아이디가 다르면 초기화를 시키기 위한 함수
+    fun notifyClearNeedAlertInBasket(clearNeed: Boolean, afterAction: () -> Unit) {
+        when (val data = restaurantDetailStateLiveData.value) {
+            is RestaurantDetailState.Success -> {
+                restaurantDetailStateLiveData.value = data.copy(
+                    // 다른 식당 메뉴가 추가됐을 때 지우기 위한 alert을 띄움
+                isClearNeedInBasketAndAction = Pair(clearNeed, afterAction)
+                )
+            }
+            else -> Unit
+        }
+    }
+
+    fun notifyClearBasket() = viewModelScope.launch {
+        // 비어진 상태이므로 아예 비워둠
+        when (val data = restaurantDetailStateLiveData.value) {
+            is RestaurantDetailState.Success -> {
+                restaurantDetailStateLiveData.value = data.copy(
+                    foodMenuListInBasket = listOf(),
+                    isClearNeedInBasketAndAction = Pair(false, {  })
+                )
+            }
+            else -> Unit
         }
     }
 }

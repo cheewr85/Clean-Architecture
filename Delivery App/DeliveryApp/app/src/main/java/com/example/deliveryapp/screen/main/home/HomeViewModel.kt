@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.deliveryapp.R
 import com.example.deliveryapp.data.entity.LocationLatLngEntity
 import com.example.deliveryapp.data.entity.MapSearchInfoEntity
+import com.example.deliveryapp.data.entity.RestaurantFoodEntity
 import com.example.deliveryapp.data.repository.map.MapRepository
+import com.example.deliveryapp.data.repository.restaurant.food.RestaurantFoodRepository
 import com.example.deliveryapp.data.repository.user.UserRepository
 import com.example.deliveryapp.screen.base.BaseViewModel
 import kotlinx.coroutines.launch
@@ -13,7 +15,8 @@ import kotlinx.coroutines.launch
 // state 패턴 활용
 class HomeViewModel(
     private val mapRepository: MapRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val restaurantFoodRepository: RestaurantFoodRepository
 ): BaseViewModel() {
 
     companion object {
@@ -22,6 +25,8 @@ class HomeViewModel(
 
     // LiveData로 state 관리
     val homeStateLiveData = MutableLiveData<HomeState>(HomeState.Uninitialized)
+
+    val foodMenuBasketLiveData = MutableLiveData<List<RestaurantFoodEntity>>()
 
     // Tmap API를 활용해서 위도 경도 기준으로 위차를 불러옴
     fun loadReverseGeoInformation(locationLatLngEntity: LocationLatLngEntity) = viewModelScope.launch {
@@ -55,6 +60,11 @@ class HomeViewModel(
         }
         // 만약 없다면 null 반환
         return null
+    }
+
+    // 홈화면에서 장바구니에 담긴 것을 확인하기 위해 함수 호출
+    fun checkMyBasket() = viewModelScope.launch {
+        foodMenuBasketLiveData.value = restaurantFoodRepository.getAllFoodMenuListInBasket()
     }
 
 }
