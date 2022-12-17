@@ -161,7 +161,7 @@ class RestaurantDetailActivity :
 
         // ViewPager가 초기화 되어 지 않다면 초기화 진행
         if (::viewPagerAdapter.isInitialized.not()) {
-            initViewPager(state.restaurantEntity.restaurantInfoId, state.restaurantFoodList)
+            initViewPager(state.restaurantEntity.restaurantInfoId, state.restaurantEntity.restaurantTitle, state.restaurantFoodList)
         }
 
         notifyBasketCount(state.foodMenuListInBasket)
@@ -177,6 +177,7 @@ class RestaurantDetailActivity :
     private fun initViewPager(
         // InfoId와 FoodList는 각각 프래그먼트를 만들어서 처리함
         restaurantInfoId: Long,
+        restaurantTitle: String,
         restaurantFoodList: List<RestaurantFoodEntity>?
     ) {
         // ViewPager 초기화 진행
@@ -188,7 +189,7 @@ class RestaurantDetailActivity :
                     ArrayList(restaurantFoodList ?: listOf())
                 ),
                 RestaurantReviewListFragment.newInstance(
-                    restaurantInfoId
+                    restaurantTitle
                 )
             )
         )
