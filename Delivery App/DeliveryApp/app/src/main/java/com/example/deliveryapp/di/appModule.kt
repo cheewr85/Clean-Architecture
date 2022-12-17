@@ -4,6 +4,7 @@ import com.example.deliveryapp.data.entity.LocationLatLngEntity
 import com.example.deliveryapp.data.entity.MapSearchInfoEntity
 import com.example.deliveryapp.data.entity.RestaurantEntity
 import com.example.deliveryapp.data.entity.RestaurantFoodEntity
+import com.example.deliveryapp.data.preference.AppPreferenceManager
 import com.example.deliveryapp.data.repository.map.DefaultMapRepository
 import com.example.deliveryapp.data.repository.map.MapRepository
 import com.example.deliveryapp.data.repository.restaurant.DefaultRestaurantRepository
@@ -34,7 +35,7 @@ val appModule = module {
 
     // ViewModel DI
     viewModel { HomeViewModel(get(), get(), get()) }
-    viewModel { MyViewModel() }
+    viewModel { MyViewModel(get()) }
     viewModel { (restaurantCategory: RestaurantCategory, locationLatLng: LocationLatLngEntity) -> RestaurantListViewModel(restaurantCategory, locationLatLng, get()) }
     viewModel { (mapSearchInfoEntity: MapSearchInfoEntity) -> MyLocationViewModel(mapSearchInfoEntity, get(), get())}
     viewModel { (restaurantEntity: RestaurantEntity) -> RestaurantDetailViewModel(restaurantEntity, get(), get())}
@@ -64,8 +65,9 @@ val appModule = module {
     single { provideRestaurantDao(get()) }
     single { provideFoodMenuBasketDao(get())}
 
-    // ResourceProvider DI, Context를 주입함
+    // ResourceProvider DI, Context를 주입함 + Preference 관련해서도 추가
     single<ResourcesProvider> { DefaultResourcesProvider(androidApplication()) }
+    single { AppPreferenceManager(androidApplication()) }
 
     // 코루틴에 필요한 DI
     single { Dispatchers.IO }

@@ -78,6 +78,14 @@
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone"/>
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/loginRequiredGroup"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:constraint_referenced_ids="loginButton, loginTextView"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
     <com.google.android.gms.common.SignInButton
         android:id="@+id/loginButton"
         android:layout_width="wrap_content"
@@ -88,7 +96,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-        android:id="@+id/loginText"
+        android:id="@+id/loginTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/google_login_required"

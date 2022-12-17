@@ -71,4 +71,5 @@
 
     <!-- Image Preview -->
     <string name="images_page">(%d/%d)</string>
+    <string name="default_web_client_id">"project-68161651003 "</string>
 </resources>
