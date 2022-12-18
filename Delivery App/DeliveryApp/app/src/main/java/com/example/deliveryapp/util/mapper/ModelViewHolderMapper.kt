@@ -2,10 +2,7 @@ package com.example.deliveryapp.util.mapper
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.example.deliveryapp.databinding.ViewholderEmptyBinding
-import com.example.deliveryapp.databinding.ViewholderFoodMenuBinding
-import com.example.deliveryapp.databinding.ViewholderRestaurantBinding
-import com.example.deliveryapp.databinding.ViewholderRestaurantReviewBinding
+import com.example.deliveryapp.databinding.*
 import com.example.deliveryapp.model.CellType
 import com.example.deliveryapp.model.Model
 import com.example.deliveryapp.screen.base.BaseViewModel
@@ -13,6 +10,7 @@ import com.example.deliveryapp.util.provider.ResourcesProvider
 import com.example.deliveryapp.widget.adapter.viewholder.EmptyViewHolder
 import com.example.deliveryapp.widget.adapter.viewholder.ModelViewHolder
 import com.example.deliveryapp.widget.adapter.viewholder.food.FoodMenuViewHolder
+import com.example.deliveryapp.widget.adapter.viewholder.restaurant.LikeRestaurantViewHolder
 import com.example.deliveryapp.widget.adapter.viewholder.restaurant.RestaurantViewHolder
 import com.example.deliveryapp.widget.adapter.viewholder.review.RestaurantReviewViewHolder
 
@@ -37,6 +35,11 @@ object ModelViewHolderMapper {
             // 해당 타입의 Restaurant ViewHolder 적용
             CellType.RESTAURANT_CELL -> RestaurantViewHolder(
                 ViewholderRestaurantBinding.inflate(inflater, parent, false),
+                viewModel,
+                resourcesProvider
+            )
+            CellType.LIKE_RESTAURANT_CELL -> LikeRestaurantViewHolder(
+                ViewholderLikeRestaurantBinding.inflate(inflater, parent, false),
                 viewModel,
                 resourcesProvider
             )

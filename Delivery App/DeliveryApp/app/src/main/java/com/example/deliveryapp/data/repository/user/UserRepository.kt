@@ -13,6 +13,8 @@ interface UserRepository {
     // 좋아요를 눌렀는지 확인하는 함수
     suspend fun getUserLikedRestaurant(restaurantTitle: String): RestaurantEntity?
 
+    suspend fun getAllUserLikedRestaurantList(): List<RestaurantEntity>
+
     // 좋아요 상태에 대해서 처리하는 함수
     suspend fun insertUserLikedRestaurant(restaurantEntity: RestaurantEntity)
 

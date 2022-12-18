@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.example.deliveryapp.R
 import com.example.deliveryapp.databinding.ActivityMainBinding
 import com.example.deliveryapp.screen.main.home.HomeFragment
+import com.example.deliveryapp.screen.main.like.RestaurantLikeListFragment
 import com.example.deliveryapp.screen.main.my.MyFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -34,6 +35,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         return when(item.itemId) {
             R.id.menu_home -> {
                 showFragment(HomeFragment.newInstance(), HomeFragment.TAG)
+                true
+            }
+            R.id.menu_like -> {
+                showFragment(RestaurantLikeListFragment.newInstance(), RestaurantLikeListFragment.TAG)
                 true
             }
             R.id.menu_my -> {
