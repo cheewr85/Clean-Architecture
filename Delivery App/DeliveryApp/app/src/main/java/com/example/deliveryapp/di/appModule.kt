@@ -33,6 +33,7 @@ import com.example.deliveryapp.util.provider.ResourcesProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -90,4 +91,5 @@ val appModule = module {
     // Firebase
     single { Firebase.firestore }
     single { FirebaseAuth.getInstance() }
+    single { FirebaseStorage.getInstance() }
 }
