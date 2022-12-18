@@ -3,6 +3,7 @@ package com.example.deliveryapp.screen.main.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.location.Location
 import android.location.LocationListener
@@ -16,12 +17,15 @@ import com.example.deliveryapp.data.entity.LocationLatLngEntity
 import com.example.deliveryapp.data.entity.MapSearchInfoEntity
 import com.example.deliveryapp.databinding.FragmentHomeBinding
 import com.example.deliveryapp.screen.base.BaseFragment
+import com.example.deliveryapp.screen.main.MainActivity
+import com.example.deliveryapp.screen.main.MainTabMenu
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantCategory
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantListFragment
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantOrder
 import com.example.deliveryapp.screen.mylocation.MyLocationActivity
 import com.example.deliveryapp.widget.adapter.RestaurantListFragmentPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
@@ -35,6 +39,8 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private lateinit var locationManager: LocationManager
 
     private lateinit var myLocationListener: MyLocationListener
+
+    private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
 
     private val changeLocationLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -200,13 +206,37 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 binding.basketButtonContainer.isVisible = true
                 binding.basketCountTextView.text = getString(R.string.basket_count, it.size)
                 binding.basketButton.setOnClickListener {
-                    // TODO 주문하기 화면으로 이동 or 로그인
+                    // 주문하기 화면으로 이동 or 로그인, FirebaseAuth로 확인함
+                    if (firebaseAuth.currentUser == null) {
+                        // 로그인이 안된 경우 마이탭으로 가서 로그인을 하게끔 처리함
+                           alertLoginNeed {
+                               (requireActivity() as MainActivity).goToTab(MainTabMenu.MY)
+                           }
+                    } else {
+                        // 로그인이 되면 주문하기 화면으로 이동하게 함
+                    }
                 }
             } else {
                 binding.basketButtonContainer.isGone = true
                 binding.basketButton.setOnClickListener(null)
             }
         }
+    }
+
+    private fun alertLoginNeed(afterAction: () -> Unit) {
+        // 다이얼로그를 만들어서 처리함
+        AlertDialog.Builder(requireContext())
+            .setTitle("로그인이 필요합니다.")
+            .setMessage("주문하려면 로그인이 필요합니다. My탭으로 이동하시겠습니까?")
+            .setPositiveButton("이동") { dialog, _ ->
+                afterAction()
+                dialog.dismiss()
+            }
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     // 위치를 불러오는 함수, 초기화 바탕으로 gps확인하고 없다면 런처를 실행시켜 권한을 받을것임

@@ -24,6 +24,7 @@ import com.example.deliveryapp.screen.main.home.restaurant.detail.review.Restaur
 import com.example.deliveryapp.screen.main.like.RestaurantLikeListViewModel
 import com.example.deliveryapp.screen.main.my.MyViewModel
 import com.example.deliveryapp.screen.mylocation.MyLocationViewModel
+import com.example.deliveryapp.util.event.MenuChangeEventBus
 import com.example.deliveryapp.util.provider.DefaultResourcesProvider
 import com.example.deliveryapp.util.provider.ResourcesProvider
 import kotlinx.coroutines.Dispatchers
@@ -74,5 +75,8 @@ val appModule = module {
     // 코루틴에 필요한 DI
     single { Dispatchers.IO }
     single { Dispatchers.Main }
+
+    // Flow
+    single { MenuChangeEventBus() }
 
 }

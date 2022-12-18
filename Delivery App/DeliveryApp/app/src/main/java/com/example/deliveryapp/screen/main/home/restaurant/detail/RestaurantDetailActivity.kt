@@ -8,6 +8,7 @@ import android.net.Uri
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.example.deliveryapp.R
 import com.example.deliveryapp.data.entity.RestaurantEntity
 import com.example.deliveryapp.data.entity.RestaurantFoodEntity
@@ -15,12 +16,17 @@ import com.example.deliveryapp.databinding.ActivityRestaurantDetailBinding
 import com.example.deliveryapp.extensions.fromDpToPx
 import com.example.deliveryapp.extensions.load
 import com.example.deliveryapp.screen.base.BaseActivity
+import com.example.deliveryapp.screen.main.MainTabMenu
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantListFragment
 import com.example.deliveryapp.screen.main.home.restaurant.detail.menu.RestaurantMenuListFragment
 import com.example.deliveryapp.screen.main.home.restaurant.detail.review.RestaurantReviewListFragment
+import com.example.deliveryapp.util.event.MenuChangeEventBus
 import com.example.deliveryapp.widget.adapter.RestaurantDetailListFragmentPagerAdapter
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.math.abs
@@ -36,6 +42,10 @@ class RestaurantDetailActivity :
             intent.getParcelableExtra<RestaurantEntity>(RestaurantListFragment.RESTAURANT_KEY)
         )
     }
+
+    private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
+
+    private val menuChangeEventBus by inject<MenuChangeEventBus>()
 
     // Intent 처리를 원활하게 하기 위한 객체 생성
     companion object {
@@ -210,8 +220,35 @@ class RestaurantDetailActivity :
             getString(R.string.basket_count, foodMenuListInBasket.size)
         }
         basketButton.setOnClickListener {
-            // TODO 주문하기 화면으로 이동 or 로그인
+            //  주문하기 화면으로 이동 or 로그인
+            if (firebaseAuth.currentUser == null) {
+                // 로그인이 되어 있지 않다면 Activity 종료하고 메인탭으로 넘어가 로그인 처리를 함
+                alertLoginNeed {
+                    lifecycleScope.launch {
+                        menuChangeEventBus.changeMenu(MainTabMenu.MY)
+                        finish()
+                    }
+                }
+            } else {
+
+            }
         }
+    }
+
+    private fun alertLoginNeed(afterAction: () -> Unit) {
+        // 다이얼로그를 만들어서 처리함
+        AlertDialog.Builder(this)
+            .setTitle("로그인이 필요합니다.")
+            .setMessage("주문하려면 로그인이 필요합니다. My탭으로 이동하시겠습니까?")
+            .setPositiveButton("이동") { dialog, _ ->
+                afterAction()
+                dialog.dismiss()
+            }
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     private fun alertClearNeedInBasket(afterAction: () -> Unit) {
