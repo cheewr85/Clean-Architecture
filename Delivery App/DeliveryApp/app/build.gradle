@@ -54,14 +54,13 @@ dependencies {
     // Coroutine
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
-    testImplementation 'org.jetbrainsl.kotlinx:kotlinx-coroutines-test:1.4.3'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.3'
 
     // Koin DI
     implementation 'io.insert-koin:koin-android:3.2.0'
     implementation 'io.insert-koin:koin-android-compat:3.2.0'
     implementation 'io.insert-koin:koin-androidx-workmanager:3.2.0'
     implementation 'io.insert-koin:koin-androidx-navigation:3.2.0'
-    testImplementation 'io.insert-koin:koin-test:3.2.0'
 
     // Retrofit2
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -100,4 +99,10 @@ dependencies {
 
     // Circle Indicator
     implementation 'me.relex:circleindicator:2.1.6'
+
+    // test
+    testImplementation 'io.insert-koin:koin-test:3.2.0'
+    testImplementation 'org.mockito:mockito-inline:3.8.0'
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+
 }
