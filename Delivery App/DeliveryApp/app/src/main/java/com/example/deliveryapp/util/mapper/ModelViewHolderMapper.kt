@@ -10,6 +10,7 @@ import com.example.deliveryapp.util.provider.ResourcesProvider
 import com.example.deliveryapp.widget.adapter.viewholder.EmptyViewHolder
 import com.example.deliveryapp.widget.adapter.viewholder.ModelViewHolder
 import com.example.deliveryapp.widget.adapter.viewholder.food.FoodMenuViewHolder
+import com.example.deliveryapp.widget.adapter.viewholder.order.OrderMenuViewHolder
 import com.example.deliveryapp.widget.adapter.viewholder.restaurant.LikeRestaurantViewHolder
 import com.example.deliveryapp.widget.adapter.viewholder.restaurant.RestaurantViewHolder
 import com.example.deliveryapp.widget.adapter.viewholder.review.RestaurantReviewViewHolder
@@ -50,6 +51,11 @@ object ModelViewHolderMapper {
             )
             CellType.REVIEW_CELL -> RestaurantReviewViewHolder(
                 ViewholderRestaurantReviewBinding.inflate(inflater, parent, false),
+                viewModel,
+                resourcesProvider
+            )
+            CellType.ORDER_FOOD_CELL -> OrderMenuViewHolder(
+                ViewholderOrderMenuBinding.inflate(inflater, parent, false),
                 viewModel,
                 resourcesProvider
             )

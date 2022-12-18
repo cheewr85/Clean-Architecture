@@ -20,6 +20,7 @@ import com.example.deliveryapp.screen.main.MainTabMenu
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantListFragment
 import com.example.deliveryapp.screen.main.home.restaurant.detail.menu.RestaurantMenuListFragment
 import com.example.deliveryapp.screen.main.home.restaurant.detail.review.RestaurantReviewListFragment
+import com.example.deliveryapp.screen.order.OrderMenuListActivity
 import com.example.deliveryapp.util.event.MenuChangeEventBus
 import com.example.deliveryapp.widget.adapter.RestaurantDetailListFragmentPagerAdapter
 import com.google.android.material.appbar.AppBarLayout
@@ -230,7 +231,9 @@ class RestaurantDetailActivity :
                     }
                 }
             } else {
-
+                startActivity(
+                    OrderMenuListActivity.newIntent(this@RestaurantDetailActivity)
+                )
             }
         }
     }

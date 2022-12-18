@@ -24,6 +24,7 @@ import com.example.deliveryapp.screen.main.home.restaurant.detail.review.Restaur
 import com.example.deliveryapp.screen.main.like.RestaurantLikeListViewModel
 import com.example.deliveryapp.screen.main.my.MyViewModel
 import com.example.deliveryapp.screen.mylocation.MyLocationViewModel
+import com.example.deliveryapp.screen.order.OrderMenuListViewModel
 import com.example.deliveryapp.util.event.MenuChangeEventBus
 import com.example.deliveryapp.util.provider.DefaultResourcesProvider
 import com.example.deliveryapp.util.provider.ResourcesProvider
@@ -44,6 +45,7 @@ val appModule = module {
     viewModel { (restaurantId: Long, restaurantFoodList: List<RestaurantFoodEntity>) -> RestaurantMenuListViewModel(restaurantId, restaurantFoodList, get()) }
     viewModel { (restaurantTitle: String) -> RestaurantReviewListViewModel(restaurantTitle, get()) }
     viewModel { RestaurantLikeListViewModel(get()) }
+    viewModel { OrderMenuListViewModel(get()) }
 
     // Repository DI
     single<RestaurantRepository> { DefaultRestaurantRepository(get(), get(), get()) }

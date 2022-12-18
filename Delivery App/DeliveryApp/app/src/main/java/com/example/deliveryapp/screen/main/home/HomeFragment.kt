@@ -23,6 +23,7 @@ import com.example.deliveryapp.screen.main.home.restaurant.RestaurantCategory
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantListFragment
 import com.example.deliveryapp.screen.main.home.restaurant.RestaurantOrder
 import com.example.deliveryapp.screen.mylocation.MyLocationActivity
+import com.example.deliveryapp.screen.order.OrderMenuListActivity
 import com.example.deliveryapp.widget.adapter.RestaurantListFragmentPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
@@ -213,8 +214,11 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                (requireActivity() as MainActivity).goToTab(MainTabMenu.MY)
                            }
                     } else {
-                        // 로그인이 되면 주문하기 화면으로 이동하게 함
-                    }
+                        // 로그인이 됐다면 주문하기 화면으로 이동하게 함
+                        startActivity(
+                            OrderMenuListActivity.newIntent(requireContext())
+                        )
+                   }
                 }
             } else {
                 binding.basketButtonContainer.isGone = true
