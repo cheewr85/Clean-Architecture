@@ -7,6 +7,8 @@ import com.example.deliveryapp.data.entity.RestaurantFoodEntity
 import com.example.deliveryapp.data.preference.AppPreferenceManager
 import com.example.deliveryapp.data.repository.map.DefaultMapRepository
 import com.example.deliveryapp.data.repository.map.MapRepository
+import com.example.deliveryapp.data.repository.order.DefaultOrderRepository
+import com.example.deliveryapp.data.repository.order.OrderRepository
 import com.example.deliveryapp.data.repository.restaurant.DefaultRestaurantRepository
 import com.example.deliveryapp.data.repository.restaurant.RestaurantRepository
 import com.example.deliveryapp.data.repository.restaurant.food.DefaultRestaurantFoodRepository
@@ -28,6 +30,8 @@ import com.example.deliveryapp.screen.order.OrderMenuListViewModel
 import com.example.deliveryapp.util.event.MenuChangeEventBus
 import com.example.deliveryapp.util.provider.DefaultResourcesProvider
 import com.example.deliveryapp.util.provider.ResourcesProvider
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -45,7 +49,7 @@ val appModule = module {
     viewModel { (restaurantId: Long, restaurantFoodList: List<RestaurantFoodEntity>) -> RestaurantMenuListViewModel(restaurantId, restaurantFoodList, get()) }
     viewModel { (restaurantTitle: String) -> RestaurantReviewListViewModel(restaurantTitle, get()) }
     viewModel { RestaurantLikeListViewModel(get()) }
-    viewModel { OrderMenuListViewModel(get()) }
+    viewModel { OrderMenuListViewModel(get(), get()) }
 
     // Repository DI
     single<RestaurantRepository> { DefaultRestaurantRepository(get(), get(), get()) }
@@ -53,6 +57,7 @@ val appModule = module {
     single<UserRepository> { DefaultUserRepository(get(), get(), get())}
     single<RestaurantFoodRepository> { DefaultRestaurantFoodRepository(get(), get(), get()) }
     single<RestaurantReviewRepository> { DefaultRestaurantReviewRepository(get()) }
+    single<OrderRepository> { DefaultOrderRepository(get(), get()) }
 
     // Network 관련 DI
     single { provideGsonConvertFactory() }
@@ -80,5 +85,8 @@ val appModule = module {
 
     // Flow
     single { MenuChangeEventBus() }
+
+    // FireStore
+    single { Firebase.firestore }
 
 }
