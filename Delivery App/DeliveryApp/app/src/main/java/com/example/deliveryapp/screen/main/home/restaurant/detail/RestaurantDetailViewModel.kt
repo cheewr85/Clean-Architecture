@@ -23,7 +23,10 @@ class RestaurantDetailViewModel(
             restaurantEntity = restaurantEntity
         )
         restaurantDetailStateLiveData.value = RestaurantDetailState.Loading
-        val foods = restaurantFoodRepository.getFoods(restaurantId = restaurantEntity.restaurantInfoId)
+        val foods = restaurantFoodRepository.getFoods(
+            restaurantId = restaurantEntity.restaurantInfoId,
+            restaurantTitle = restaurantEntity.restaurantTitle
+        )
         // 장바구니에 있는 값 확인함
         val foodMenuListInBasket = restaurantFoodRepository.getAllFoodMenuListInBasket()
         // 찜이 눌렀는지 확인

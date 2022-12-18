@@ -10,9 +10,11 @@ import com.example.deliveryapp.databinding.FragmentMyBinding
 import com.example.deliveryapp.extensions.load
 import com.example.deliveryapp.model.restaurant.order.OrderModel
 import com.example.deliveryapp.screen.base.BaseFragment
+import com.example.deliveryapp.screen.review.AddRestaurantReviewActivity
 import com.example.deliveryapp.util.provider.ResourcesProvider
 import com.example.deliveryapp.widget.adapter.ModelRecyclerAdapter
 import com.example.deliveryapp.widget.adapter.listener.AdapterListener
+import com.example.deliveryapp.widget.adapter.listener.order.OrderListListener
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -57,7 +59,13 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
     private val resourcesProvider by inject<ResourcesProvider>()
 
     private val adapter by lazy {
-        ModelRecyclerAdapter<OrderModel, MyViewModel>(listOf(), viewModel, resourcesProvider, object : AdapterListener {})
+        ModelRecyclerAdapter<OrderModel, MyViewModel>(listOf(), viewModel, resourcesProvider, object : OrderListListener {
+            override fun writeRestaurantReview(orderId: String, restaurantTitle: String) {
+                startActivity(
+                    AddRestaurantReviewActivity.newIntent(requireContext(), orderId, restaurantTitle)
+                )
+            }
+        })
     }
 
     override fun initViews() = with(binding) {

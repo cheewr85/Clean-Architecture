@@ -36,7 +36,18 @@
         <activity
             android:name=".screen.order.OrderMenuListActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".screen.review.gallery.GalleryActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".screen.review.AddRestaurantReviewActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".screen.review.camera.CameraActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".screen.review.camera.preview.ImagePreviewListActivity"
+            android:exported="false"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_map" />

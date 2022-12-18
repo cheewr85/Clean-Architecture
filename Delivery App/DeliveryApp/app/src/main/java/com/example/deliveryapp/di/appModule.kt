@@ -30,6 +30,7 @@ import com.example.deliveryapp.screen.order.OrderMenuListViewModel
 import com.example.deliveryapp.util.event.MenuChangeEventBus
 import com.example.deliveryapp.util.provider.DefaultResourcesProvider
 import com.example.deliveryapp.util.provider.ResourcesProvider
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
@@ -86,7 +87,7 @@ val appModule = module {
     // Flow
     single { MenuChangeEventBus() }
 
-    // FireStore
+    // Firebase
     single { Firebase.firestore }
-
+    single { FirebaseAuth.getInstance() }
 }

@@ -13,7 +13,8 @@ data class FoodModel(
     val price: Int,
     val imageUrl: String,
     val restaurantId: Long,
-    val foodId: String
+    val foodId: String,
+    val restaurantTitle: String
 ): Model(id, type) {
 
     // 식당 상세화면에서 나오는 음식들, 장바구니에 담을 수 있게 인덱스를 통해 여러개 담을 수 있도록 함
@@ -23,6 +24,7 @@ data class FoodModel(
         description,
         price,
         imageUrl,
-        restaurantId
+        restaurantId,
+        restaurantTitle
     )
 }
